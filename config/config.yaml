@@ -1,0 +1,594 @@
+#config_version=5
+#### Black Knight ####  MPF Version 0.56
+
+#### Build Dates - started July 2024
+#### CW Goss ####  cwg29@msn.com
+
+
+hardware:
+    platform: opp
+    driverboards: gen2
+    segment_displays: light_segment_displays
+    
+bcp:
+  connections:
+    local_display:
+      port: 5050
+
+mpf-mc:
+  bcp_port: 5050
+    
+#BLACK KNIGHT
+
+opp:
+  #Use the USB ports defined by your OS for the two STM32 boards
+      ports: COM13, COM14 , COM15
+  #USING SERIAL NUMBERS INSTEAD OF CHAINS
+  #  Board 0 has serial number 0, Board 1 has serial number 1.
+  #  This is convenient if your OS tends to reassign the serial port.
+  #  MPF will automatically address the correct board even if the ports
+  #     are swapped.
+
+  #For multiple CobraPin boards in a game, you will either have to give 
+  #  the STM32 boards on the second CobraPin board new serial numbers 
+  #  (10 and 11 are suggested for the 2nd board since 2 is used by the 
+  #  CobraPin Xpansion Board) 
+  #  <OR> Use the chains section to assign a port to a board number. 
+  #  Mixing these up could cause blown FETs, coils, and fuses. Proceed 
+  #  with caution. Test without coil power and use the yellow coil LEDs 
+  #  for feedback.
+  #chains:
+     #0: /dev/ttyACM0
+     #1: /dev/ttyACM1
+     
+mpf:
+     default_light_hw_update_hz: 50  # defaults to 50
+
+
+psus:
+    default:
+    #Gives the capacitors extra time to recharge after firing a coil
+    #  and eases the load on the power supply. Doesn't affect autofire
+    #  devices like flippers, pops, slings.
+        release_wait_ms: 50
+    
+    #DIRECT SWITCHES
+  #switch numbers are labelled in silkscreen on the board
+
+config:
+    - keyboard.yaml
+    - coils_config.yaml
+    - lights_config.yaml
+    - switches_config.yaml
+    #- slides_config.yaml #welcome slide
+    #- mc.yaml
+
+modes:
+    - base
+    - awards
+    - turnabout
+    ##- skillshot
+    - extra_ball
+    - bonus_collect
+    - popbmpr
+    - dropbank_top
+    - dropbank_bottom
+    - magna_save
+    - multiball
+    - mystery
+    - spinner
+    #- high_score
+    #- spec_lanes
+    ##- bonus
+
+
+game:
+    balls_per_game: 3
+    max_players: 2
+    add_player_switch_tag: add_player
+
+displays:
+    window:
+        width: 640
+        height: 480
+window:
+  height: 480
+  width: 640
+  title: Black Knight  
+  resizable: false
+  fullscreen: false
+  borderless: false
+  exit_on_escape: true
+  show_cursor: false
+  source_display: window
+        
+widget_styles:
+    text_default:
+        font_name: ancienttext
+        font_size: 30
+        adjust_top: 2
+        adjust_bottom: 3
+    space_title_huge:
+        font_name: ancienttext
+        font_size: 70
+        antialias: true
+        adjust_top: 3
+        adjust_bottom: 3
+    space_title:
+        font_name: ancienttext
+        font_size: 50
+        antialias: true
+        adjust_top: 2
+        adjust_bottom: 3
+    medium:
+        font_name: ancienttext
+        font_size: 60
+        adjust_top: 1
+        adjust_bottom: 1
+    small:
+        font_name: ancienttext
+        font_size: 30
+        adjust_top: 2
+        adjust_bottom: 3
+    tall_title:
+        font_name: big_noodle_titling
+        font_size: 20
+    attract_mode_high_score_display_label:
+        font_name: bobbithehippie
+        font_size: 60
+        anchor_x: right
+        anchor_y: top
+        x: center-90
+        #bold: true
+    attract_mode_high_score_display_name:
+        font_name: bobbithehippie
+        font_size: 75
+        anchor_x: right
+        anchor_y: top
+        x: center+110
+    attract_mode_high_score_display_score:
+        font_name: ancienttext
+        font_size: 75
+        anchor_x: left
+        anchor_y: top
+        x: center+170
+        number_grouping: true
+        min_digits: 1
+        
+#slide_player:
+    #init_done: welcome_slide
+
+
+      
+
+
+#coil_player:
+    #s_right_inlane:
+        #bell: c_bell
+        #activation_switch: s_right_inlane
+playfields:
+    playfield:
+        tags: default
+        default_source_device: bd_plunger #bd_trough  # use None in steps before 8
+        
+machine:
+    balls_installed: 3
+    min_balls: 1
+    
+ball_devices:
+    bd_trough:
+        ball_switches: s_trough_1, s_trough_2, s_trough_3, s_trough_4, s_trough_jam
+        eject_coil: c_trough_eject
+        confirm_eject_type: target
+        tags: trough, home, drain
+        jam_switch: s_trough_jam
+        eject_coil_jam_pulse: 15ms
+        eject_targets: bd_plunger
+    bd_plunger:
+        ball_switches: s_shooter_lane_eject
+        eject_coil: c_shooter_launch
+        mechanical_eject: true
+        eject_timeouts: 5s
+    bd_top_kickout:
+        ball_switches: s_upr_ball_trap_1, s_upr_ball_trap_2, s_upr_ball_trap_3
+        eject_coil: c_kickout_top
+        eject_timeouts: 750ms
+    bd_bottom_kickout:
+        ball_switches: s_lwr_eject_hole
+        eject_coil: c_kickout_lower
+        eject_timeouts: 750ms   
+    
+magnets:
+  magnet_left:
+    magnet_coil: c_magna_left
+    grab_switch: s_magna_save_left
+    release_ball_events: timer_magna_save_magnet_left_timer_complete
+    fling_ball_events: magnet_left_fling
+    enable_events: blu_left_magna_save_enable
+    disable_events:
+      - ball_will_end
+      - ball_ending
+      - timer_magna_save_magnet_left_timer_complete
+      - timer_bonus_collect_timer_started
+    grab_time: 1s
+    release_time: 250ms
+    
+  magnet_right:
+    magnet_coil: c_magna_right
+    grab_switch: s_magna_save_right
+    release_ball_events: timer_magna_save_magnet_right_timer_complete
+    fling_ball_events: magnet_right_fling
+    enable_events: red_right_magna_save_enable
+    disable_events:
+      - ball_will_end
+      - ball_ending
+      - timer_magna_save_magnet_right_timer_complete
+      - timer_bonus_collect_timer_started
+    grab_time: 1s
+    release_time: 250ms
+    
+flippers:
+    left_flipper:
+        main_coil: c_flipper_left_main
+        hold_coil: c_flipper_left_hold
+        activation_switch: s_left_flipper
+        label: left main flipper
+        #enable_events: #machine_reset_phase_3 #temp, normally enabled when ball is in trough.
+    right_flipper:
+        main_coil: c_flipper_right_main
+        hold_coil: c_flipper_right_hold
+        activation_switch: s_right_flipper
+        label: right main flipper
+        #enable_events: #machine_reset_phase_3 #temp, normally enabled when ball is in trough.
+    left_flipper_upper:
+        main_coil: c_flipper_upper_left_main
+        hold_coil: c_flipper_upper_left_hold
+        activation_switch: s_left_flipper_upper
+        label: left upper flipper
+        #enable_events: #machine_reset_phase_3 #temp, normally enabled when ball is in trough.
+    right_flipper_upper:
+        main_coil: c_flipper_upper_right_main
+        hold_coil: c_flipper_upper_right_hold
+        activation_switch: s_right_flipper_upper
+        label: right upper flipper
+        #enable_events: #machine_reset_phase_3 #temp, normally enabled when ball is in trough.
+        
+autofire_coils:
+    left_slingshot:
+        coil: c_slingshot_left
+        switch: s_left_sling_shot
+        #enable_events: #machine_reset_phase_3 #temp, normally enabled when ball is in trough.
+    right_slingshot:
+        coil: c_slingshot_right
+        switch: s_right_sling_shot
+        #enable_events: #machine_reset_phase_3 #temp, normally enabled when ball is in trough.
+    pop_bmp:
+        coil: c_pop_bmp
+        switch: s_pop_bumper
+        #enable_events: #machine_reset_phase_3 #temp, normally enabled when ball is in trough.
+        
+drop_targets:
+    left1_1:
+        switch: s_lwr_lf_blue_drop_target_1
+    left1_2:
+        switch: s_lwr_lf_blue_drop_target_2
+    left1_3:
+        switch: s_lwr_lf_blue_drop_target_3
+    left2_1:
+        switch: s_upr_lf_blue_drop_target_1
+    left2_2:
+        switch: s_upr_lf_blue_drop_target_2
+    left2_3:
+        switch: s_upr_lf_blue_drop_target_3
+    right1_1:
+        switch: s_lwr_rt_red_drop_target_1
+    right1_2:
+        switch: s_lwr_rt_red_drop_target_2
+    right1_3:
+        switch: s_lwr_rt_red_drop_target_3
+    right2_1:
+        switch: s_upr_rt_red_drop_target_1
+    right2_2:
+        switch: s_upr_rt_red_drop_target_2
+    right2_3:
+        switch: s_upr_rt_red_drop_target_3
+    
+        
+drop_target_banks:
+    right_bank_lwr:
+        drop_targets: right1_1, right1_2, right1_3
+        reset_coils: c_drop_target_red_lwr_right
+        reset_events:
+          - lwr_red_dropbank_shot_timeout
+          - drop_target_bank_right_bank_lwr_down #{value==3}     
+          - ball_starting 
+        #reset_on_complete: 1s
+    right_bank_upr:
+        drop_targets: right2_1, right2_2, right2_3
+        reset_coils: c_drop_target_red_upr_right
+        reset_events:
+          - upr_red_dropbank_shot_timeout
+          - drop_target_bank_right_bank_upr_down #{value==3}     
+          - ball_starting 
+        #reset_on_complete: 1s
+    left_bank_lwr:
+        drop_targets: left1_1, left1_2, left1_3
+        reset_coils: c_drop_target_blue_lwr_left
+        reset_events:
+          - lwr_blu_dropbank_shot_timeout
+          - drop_target_bank_left_bank_lwr_down #{value==3}     
+          - ball_starting          
+        #reset_on_complete: 1s
+    left_bank_upr:
+        drop_targets: left2_1, left2_2, left2_3
+        reset_coils: c_drop_target_blue_upr_left
+        reset_events:
+          - upr_blu_dropbank_shot_timeout
+          - drop_target_bank_left_bank_upr_down #{value==3}     
+          - ball_starting 
+        #reset_on_complete: 1s
+        
+spinners:
+  bk_spinner:
+    switch: s_spinner
+    active_ms: 200
+    idle_ms: 2000    
+    
+sound_system:
+    tracks:
+        voice:
+            volume: 1
+            priority: 3
+            simultaneous_sounds: 1
+            preload: true
+        sfx:
+            volume: 1
+            priority: 1
+            preload: true
+            simultaneous_sounds: 2
+        music:
+            volume: 0.5
+            simultaneous_sounds: 1
+        rocknroll:
+            volume: 0.9
+            priority: 5
+            simultaneous_sounds: 1
+    buffer: 2048  # previous value was 512
+    frequency: 44100
+    channels: 2
+    master_volume: 1
+    enabled: true
+    
+    
+assets:
+    sounds:
+        default:
+            track: sfx
+    music:
+        track: music
+        mode_end_action: stop
+    rocknroll:
+        track: rocknroll
+    sfx:
+        track: sfx
+        load: preload
+        ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+    voice:
+        track: voice
+        load: preload
+        ducking:
+              target: sfx
+              delay: 0
+              attack: 0.1 sec
+              attenuation: 0.5
+              release_point: 0.5 sec
+              release: 0.2 sec    
+ 
+ 
+videos:
+ 
+    ball_end_video:
+        width: 640
+        height: 480
+        file: ball_end_video.mp4
+
+
+#### CobraPin Serial Segment Displays ####
+#create light group for each NeoSeg display.  120 leds for 8 digit type and 30 for 2-digit type
+neoseg_displays:
+  neoSeg_0:
+    start_channel: 3-0-0
+    size: 8digit
+    light_template:
+      type: w
+      subtype: led
+      color_correction_profile: NeoSeg_white
+  neoSeg_1:
+    start_channel: 3-0-120
+    size: 8digit
+    light_template:
+      type: w
+      subtype: led
+      color_correction_profile: NeoSeg_white
+  neoSeg_2:
+    start_channel: 3-0-240
+    size: 8digit
+    light_template:
+      type: w
+      subtype: led
+      color_correction_profile: NeoSeg_white  
+  neoSeg_3:
+    start_channel: 3-0-360
+    size: 8digit
+    light_template:
+      type: w
+      subtype: led
+      color_correction_profile: NeoSeg_white
+      
+  neoSeg_4:
+    start_channel: 3-0-480
+    size: 2digit
+    light_template:
+      type: w
+      subtype: led
+      color_correction_profile: NeoSeg_white
+  neoSeg_5:
+    start_channel: 3-0-510
+    size: 2digit
+    light_template:
+      type: w
+      subtype: led
+      color_correction_profile: NeoSeg_white
+
+
+segment_displays:
+
+  neoSegP1:
+    number: 1
+    size: 16
+    integrated_dots: true
+    use_dots_for_commas: true
+    default_transition_update_hz: 30
+    platform_settings:
+      light_groups:
+        - neoSeg_3
+        #- neoSeg_1
+      type: 14segment
+      
+  neoSegP2:
+    number: 1
+    size: 16
+    integrated_dots: true
+    use_dots_for_commas: true
+    default_transition_update_hz: 30
+    platform_settings:
+      light_groups:
+        - neoSeg_0
+        #- neoSeg_1
+      type: 14segment
+      
+  neoSegP3:
+    number: 1
+    size: 16
+    integrated_dots: true
+    use_dots_for_commas: true
+    default_transition_update_hz: 30
+    platform_settings:
+      light_groups:
+        - neoSeg_1
+        #- neoSeg_1    ### you can group displays together
+      type: 14segment
+      
+  neoSegP4:
+    number: 1
+    size: 16
+    integrated_dots: true
+    use_dots_for_commas: true
+    default_transition_update_hz: 30
+    platform_settings:
+      light_groups:
+        - neoSeg_2
+        #- neoSeg_1
+      type: 14segment
+      
+  neoSegRight:
+    number: 1
+    size: 16
+    integrated_dots: true
+    use_dots_for_commas: true
+    default_transition_update_hz: 30
+    platform_settings:
+      light_groups:
+         - neoSeg_0
+         - neoSeg_1
+         - neoSeg_2
+      type: 14segment
+      
+  neoSegball:
+    number: 1
+    size: 4
+    integrated_dots: true
+    use_dots_for_commas: true
+    default_transition_update_hz: 30
+    platform_settings:
+      light_groups:
+        - neoSeg_4
+#        #- neoSeg_1
+      type: 14segment
+  neoSegcredit:
+    number: 1
+    size: 4
+    integrated_dots: true
+    use_dots_for_commas: true
+    default_transition_update_hz: 30
+    platform_settings:
+      light_groups:
+        - neoSeg_5
+ #       #- neoSeg_1
+      type: 14segment
+      
+#use color_correction_profile whitepoint to adjust the brightness of each
+#NeoSeg display
+light_settings:
+
+  default_fade_ms: 40   #GLOBAL - local show's fade setting will overide default
+  
+  color_correction_profiles:
+    NeoSeg_red:
+      whitepoint: [.8, .8, .8]
+    NeoSeg_white:
+      whitepoint: [.55, .55, .55]
+    NeoSeg_blue:
+      whitepoint: [.5, .5, .5]
+    NeoSeg_orange:
+      whitepoint: [.9, .9, .9]
+    NeoSeg_yellow:
+      whitepoint: [1, 1, 1]
+    NeoSeg_green:
+      whitepoint: [.5, .5, .5]
+#### CobraOin Serial Segment Displays ####
+
+
+
+info_lights:    
+    player_1:
+        light: l_bb_19 #led_player1
+    player_2:
+        light: l_bb_2 #led_player2
+    player_3:
+        light: l_bb_46 #led_player3
+    player_4:
+        light: l_bb_49 #led_player4
+    tilt:
+        light: l_bb_75 #led_tilt
+    game_over:
+        light: l_bb_80 #led_game_over
+    match_10:
+        light: l_bb_78 #bb_match
+    match_20:
+        light: l_bb_78 #bb_match
+    match_30:
+        light: l_bb_78 #bb_match
+    match_40:
+        light: l_bb_78 #bb_match
+    match_50:
+        light: l_bb_78 #bb_match
+    match_60:
+        light: l_bb_78 #bb_match
+    match_70:
+        light: l_bb_78 #bb_match
+    match_80:
+        light: l_bb_78 #bb_match
+    match_90:
+        light: l_bb_78 #bb_match
+
+        
+
+    
+

@@ -1,0 +1,127 @@
+#config_version=5
+
+#Black Knight
+
+#coil numbers are labelled in silkscreen on the board
+
+  #There are multiple ways to configure flippers, use the one that
+  #  matches your hardware
+  
+coils:
+    c_drop_target_blue_upr_left:
+        number: 0-0-12
+        tags: blue_upr_drop_target
+        default_pulse_ms: 25
+    c_shooter_launch:
+        number: 0-0-1
+        tags: launch_kicker
+        default_pulse_ms: 20
+    c_trough_eject:
+        number: 0-0-2
+        tags: trough
+        default_pulse_ms: 18              
+    c_slingshot_right:
+        number: 0-0-3
+        tags: slingshot
+        default_pulse_ms: 10
+        default_recycle: true
+        platform_settings:
+            recycle_factor: 3
+    c_slingshot_left:
+        number: 0-0-4
+        tags: slingshot
+        default_pulse_ms: 10
+        default_recycle: true
+        platform_settings:
+            recycle_factor: 3
+    c_kickout_lower:
+        number: 0-0-5
+        tags: lower_trap
+        default_pulse_ms: 10    
+    c_drop_target_blue_lwr_left:
+        number: 0-0-7
+        tags: blue_lwr_drop_target
+        default_pulse_ms: 30   
+    c_drop_target_red_lwr_right:
+        number: 0-0-6
+        tags: red_lwr_drop_target
+        default_pulse_ms: 25        
+    c_drop_target_red_upr_right:
+        number: 0-0-0
+        tags: red_upr_drop_target
+        default_pulse_ms: 30
+    c_pop_bmp:
+        number: 0-0-13
+        tags: pop
+        default_pulse_ms: 15
+    c_kickout_top:
+        number: 0-0-14
+        tags: top_trap
+        default_pulse_ms: 15
+    c_bell:
+        number: 0-0-15
+        tags: bell
+        default_pulse_ms: 10
+
+    c_flipper_left_main:
+        number: 1-0-1
+        default_pulse_ms: 25
+    c_flipper_left_hold:
+        number: 1-0-2
+        allow_enable: true
+        default_hold_power: 0.75
+        default_pulse_ms: 8
+    c_flipper_right_main:
+        number: 1-0-3
+        default_pulse_ms: 27
+    c_flipper_right_hold:
+        number: 1-0-4
+        allow_enable: true 
+        default_hold_power: 0.75
+        default_pulse_ms: 8
+    c_flipper_upper_left_main:
+        number: 1-0-5
+        default_pulse_ms: 15
+    c_flipper_upper_left_hold:
+        number: 1-0-6
+        allow_enable: true
+        default_hold_power: 0.75
+        default_pulse_ms: 8
+    c_flipper_upper_right_main:
+        number: 1-0-7
+        default_pulse_ms: 15
+    c_flipper_upper_right_hold:
+        number: 1-0-0
+        allow_enable: true
+        default_hold_power: 0.75
+        default_pulse_ms: 8
+    
+    
+        
+### Satellite Board  ### Coils are 48 VDC  ###
+
+  
+    c_magna_left:
+        number: 3-0-1
+        tags: magna_save_coil_left
+        default_pulse_ms: 10
+        default_hold_power: 0.375
+    c_magna_right:
+        number: 3-0-2
+        tags: magna_save_coil_right
+        default_pulse_ms: 10
+        default_hold_power: 0.375
+   
+        
+    
+    #led_flasher_1:
+    #    number: 3-0-5
+    #    allow_enable: true
+    #    default_hold_power: 0.2
+    #    default_pulse_ms: 5
+    #led_flasher_2:
+    #    number: 3-0-6
+    #    allow_enable: true
+    #    default_hold_power: 0.2
+    #    default_pulse_ms: 5
+        

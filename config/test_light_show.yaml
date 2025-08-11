@@ -1,0 +1,26 @@
+#show_version=5
+##! show: test_light_show
+#- duration: 1
+  #lights:
+    #led_game_over: white
+    
+- duration: 1
+  lights:
+    led_apron_1: blue-f250ms
+    gi: white-f500ms
+- duration: 1
+  lights:
+    led_apron_2: blue-f250ms
+- duration: 1
+  lights:
+    led_apron_3: blue-f250ms
+- duration: 1
+  lights:
+    led_apron_shooter_lane: blue-f250ms
+- duration: 1
+  lights:
+    led_shoot_again: blue-f250ms
+    gi: blue-f500ms
+
+
+

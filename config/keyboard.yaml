@@ -1,0 +1,53 @@
+#config_version=5
+
+#virtual_platform_start_active_switches:
+    #- s_trough_1
+    #- s_trough_2
+    #- s_trough_3
+
+
+keyboard:
+
+# Basic switches
+    1:
+        switch: s_trough_1
+        toggle: true
+    2:
+        switch: s_trough_2
+        toggle: true
+    3:
+        switch: s_trough_3
+        toggle: true
+    4:
+        switch: s_trough_4
+        toggle: true
+    p:
+        switch: s_shooter_lane_eject
+    "'":
+        switch: s_start
+    z:
+        switch: s_left_flipper
+    m:
+        switch: s_right_flipper
+    s:
+        switch: s_startbutton
+    q:
+        switch: s_right_inlane
+    t:
+        switch: s_right_standup_target
+    r:
+        switch: s_left_pop_bumper
+    l:
+        switch: s_left_saucer
+    k:
+        switch: s_lwr_eject_hole
+    d:
+        switch: s_upr_lf_blue_drop_target_1
+    f:
+        switch: s_pop_bumper
+    g:
+        switch: s_magna_save_left
+    h:
+        switch: s_magna_save_right
+
+# combos

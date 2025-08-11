@@ -1,0 +1,156 @@
+#config_version=5
+
+  #DIRECT SWITCHES
+  #switch numbers are labelled in silkscreen on the board
+switches:
+    s_lwr_lf_blue_drop_target_1:
+        number: 0-0-1
+        type: NC
+                
+    s_lwr_lf_blue_drop_target_2:
+        number: 0-0-2
+        type: NC
+                
+    s_lwr_lf_blue_drop_target_3:
+        number: 0-0-3
+        type: NC
+                
+    s_lwr_rt_red_drop_target_1:
+        number: 0-0-8
+        type: NC
+                
+    s_lwr_rt_red_drop_target_2:
+        number: 0-0-9
+        type: NC
+                
+    s_lwr_rt_red_drop_target_3:
+        number: 0-0-10
+        type: NC
+                
+    s_trough_1:
+        number: 0-0-16
+        type: NC
+        tags: ball_1
+        
+    s_trough_jam:
+        number: 0-0-17
+        type: NC
+        tags: jam
+    s_right_sling_shot:
+        number: 0-0-18
+        tags: right_slingshot
+        ignore_window_ms: 250ms
+    s_left_sling_shot:
+        number: 0-0-19
+        tags: left_slingshot
+        ignore_window_ms: 250ms
+    s_upr_lf_blue_drop_target_1:
+        number: 0-0-24
+        type: NC                
+    s_upr_lf_blue_drop_target_2:
+        number: 0-0-25
+        type: NC        
+    s_upr_lf_blue_drop_target_3:
+        number: 0-0-26
+        type: NC
+    s_pop_bumper:
+        number: 0-0-27 
+        tags: jet  
+        
+    s_left_flipper:
+        number: 1-0-1
+        tags: left_flipper
+    s_right_flipper:
+        number: 1-0-2
+        tags: right_flipper
+    s_left_flipper_upper:
+        number: 1-0-3
+        tags: left_flipper_upper
+    s_right_flipper_upper:
+        number: 1-0-8
+        tags: right_flipper_upper
+                
+    s_upr_rt_red_drop_target_1:
+        number: 1-0-9
+        type: NC                
+    s_upr_rt_red_drop_target_2:
+        number: 1-0-10
+        type: NC        
+    s_upr_rt_red_drop_target_3:
+        number: 1-0-11
+        type: NC
+        
+        #MATRIX SWITCHES
+  #valid numbers are 1-0-32 through 1-0-95
+    
+    s_shooter_lane_eject:
+        number: 1-0-32
+        tags: plunger, player
+    s_trough_2:
+        number: 1-0-33
+        tags: ball_2
+    s_trough_3:
+        number: 1-0-34
+        tags: ball_3
+    s_trough_4:
+        number: 1-0-35
+        tags: ball_4
+    s_ro_left_lwr_out:
+        number: 1-0-36
+        tags: playfield_active, s_right_special, player_active        
+    s_ro_left_lwr_in:
+        number: 1-0-37
+        tags: playfield_active, s_right_bns_adv, player_active          
+    s_ro_right_lwr_out:
+        number: 1-0-40
+        tags: playfield_active, s_left_bns_adv, player_active        
+    s_lwr_eject_hole:
+        number: 1-0-41
+        ignore_window_ms: 250ms
+    s_upr_ball_trap_1:
+        number: 1-0-45
+        ignore_window_ms: 250ms
+    s_ro_right_lwr_in:
+        number: 1-0-48
+        tags: playfield_active, s_left_bns_adv, player_active         
+    s_ctr_ramp_gate:
+        number: 1-0-49
+        tags: playfield_active, player_active
+    s_upr_ball_trap_2:
+        number: 1-0-53
+        ignore_window_ms: 250ms
+    s_spinner:
+        number: 1-0-60
+        tags: playfield_active, player_active
+    s_upr_ball_trap_3:
+        number: 1-0-61
+        ignore_window_ms: 250ms
+    s_turnaround:
+        number: 1-0-68
+        tags: playfield_active, player_active   
+    s_ro_upr_left_ramp:
+        number: 1-0-69
+        tags: playfield_active, player_active        
+           
+              
+        
+    
+    
+    # ...    
+
+    #s_topRollunder:
+        #number: 1-0-95 
+        #ignore_window_ms: 250ms    #tune to assist in debouncing
+        
+    ####Sattilite Board V1.01
+    
+    
+    s_magna_save_left:
+        number: 3-0-1
+        tags: magna_save_button_left
+    s_magna_save_right:
+        number: 3-0-2
+        tags: magna_save_button_right
+    s_startbutton:
+        number: 3-0-3
+        tags: start, player, high_score_select, add_player
