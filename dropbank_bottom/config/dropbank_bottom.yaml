@@ -1,0 +1,502 @@
+#config_version=5
+##! mode: dropbank_bottom
+
+
+#BLACK KNIGHT
+
+#### DROP TARGETS ####
+
+# There are two banks of drop targets on each playfield level. Targets on the left side of the playfield are denoted by 
+# blue lights in front of them, and targets on the right side are denoted by red lights.
+
+# The drop target banks are timed, so after hitting one or more targets in a bank, you have only a limited amount of 
+# time to hit the rest of the targets in that bank, before the bank is reset.
+
+# Completing a bank of drop targets activates a Magna-Save on the lower playfield, if one or both are not lit. (See 
+# Magna-Save below.) Completing a bank of drop targets also lights one of the three arrow lights in front of the bank.
+# Completing each bank of drop targets on either playfield level three times each, lights the Extra Ball on the upper 
+# playfield (see Extra Ball below).
+
+# The amount of time allowed to the player to complete a bank of drop targets before they reset, is adjustable. See 
+# the Instruction Manual for more information.
+
+### Drop Target Awards should persist between balls.  Used AWARDS to track  ###
+### early version drop count did not persist between balls - see Nov 2024 version.  Now persists for Extra Ball award.
+
+
+
+
+mode:
+  start_events: start_mode_dropbank_bottom
+  stop_events: stop_mode_dropbank_bottom
+  priority: 550
+  
+event_player:
+  mode_ctrdropbank_started: initialize_dropbank_bottom
+  
+  ############ lower left drop bank ############
+  player_shot_lwr_blu_drop_any: lwr_blu_dropbank_shot_started
+  timer_tmr_reset_drop_bank_blue_lwr_complete: lwr_blu_dropbank_shot_timeout
+  s_lwr_lf_blue_drop_target_1_active: lwr_blu_bank_hit
+  s_lwr_lf_blue_drop_target_2_active: lwr_blu_bank_hit
+  s_lwr_lf_blue_drop_target_3_active: lwr_blu_bank_hit
+  drop_target_bank_left_bank_lwr_down: blu_left_magna_save_enable
+  drop_bank_blue_lwr_count_hit{count==1}: lwr_left_eb_lvl_1_complete
+  drop_bank_blue_lwr_count_hit{count==2}: lwr_left_eb_left_lvl_2_complete
+  drop_bank_blue_lwr_count_hit{count==3}: lwr_blu_left_extra_ball_enable
+  
+  ############ lower right drop bank ############
+  player_shot_lwr_red_drop_any: lwr_red_dropbank_shot_started
+  timer_tmr_reset_drop_bank_red_lwr_complete: lwr_red_dropbank_shot_timeout
+  s_lwr_rt_red_drop_target_1_active: lwr_red_bank_hit
+  s_lwr_rt_red_drop_target_2_active: lwr_red_bank_hit
+  s_lwr_rt_red_drop_target_3_active: lwr_red_bank_hit
+  drop_target_bank_right_bank_lwr_down: red_right_magna_save_enable
+  drop_bank_red_lwr_count_hit{count==1}: lwr_right_eb_lvl_1_complete
+  drop_bank_red_lwr_count_hit{count==2}: lwr_right_eb_lvl_2_complete
+  drop_bank_red_lwr_count_hit{count==3}: lwr_red_right_extra_ball_enable
+  
+  
+  
+shot_groups:
+  lower_blue_dropbank_shots:
+    shots: lwr_blu_drop_1, lwr_blu_drop_2, lwr_blu_drop_3
+    restart_events: drop_target_bank_left_bank_lwr_up
+    enable_events: initialize_dropbank_bottom
+    reset_events:
+      lower_blue_dropbank_shots_on_complete: 2s
+      
+  lower_red_dropbank_shots:
+    shots: lwr_red_drop_1, lwr_red_drop_2, lwr_red_drop_3
+    restart_events: drop_target_bank_right_bank_lwr_up
+    enable_events: initialize_dropbank_bottom
+    reset_events:
+      lower_red_dropbank_shots_on_complete: 2s
+    
+shots:
+    
+  lwr_blu_drop_1:
+    switch: s_lwr_lf_blue_drop_target_1
+    profile: drop_sequence
+    restart_events: drop_target_bank_left_bank_lwr_up
+
+  lwr_blu_drop_2:
+    switch: s_lwr_lf_blue_drop_target_2
+    profile: drop_sequence
+    restart_events: drop_target_bank_left_bank_lwr_up
+
+  lwr_blu_drop_3:
+    switch: s_lwr_lf_blue_drop_target_3
+    profile: drop_sequence
+    restart_events: drop_target_bank_left_bank_lwr_up
+    
+  lwr_blu_drop_any:
+    switch: s_lwr_lf_blue_drop_target_1, s_lwr_lf_blue_drop_target_2, s_lwr_lf_blue_drop_target_3
+    
+    
+  lwr_red_drop_1:
+    switch: s_lwr_rt_red_drop_target_1
+    profile: drop_sequence
+    restart_events: drop_target_bank_left_bank_lwr_up
+
+  lwr_red_drop_2:
+    switch: s_lwr_rt_red_drop_target_2
+    profile: drop_sequence
+    restart_events: drop_target_bank_left_bank_lwr_up
+
+  lwr_red_drop_3:
+    switch: s_lwr_rt_red_drop_target_3
+    profile: drop_sequence
+    restart_events: drop_target_bank_left_bank_lwr_up
+    
+  lwr_red_drop_any:
+    switch: s_lwr_rt_red_drop_target_1, s_lwr_rt_red_drop_target_2, s_lwr_rt_red_drop_target_3
+    
+
+      
+shot_profiles:
+  drop_sequence:
+    #advance_on_hit: false
+    states:
+      - name: off
+        show: off
+      - name: lit
+        show: flash
+      - name: down
+        show: on
+  bank_profile:
+    states:
+      - name: drop1
+        show: on
+      - name: drop2
+        show: on
+      - name: drop3
+        show: on
+    
+      
+
+timers:
+
+############ lower left drop bank ############
+######### Timed drop bank shot ################  
+  tmr_reset_drop_bank_blue_lwr:
+        start_value: 0  #original game options Funtion 33: 6-15 seconds
+        end_value: 10
+        direction: up
+        tick_interval: 1s
+        start_running: no
+        control_events:
+          - event: lwr_blu_bank_hit #lwr_blu_dropbank_shot_started
+            action: start
+          - event: lwr_blu_bank_hit
+            action: restart       
+        #  - event: drop_target_bank_left_bank_lwr_down
+        #    action: stop
+          - event: drop_target_bank_left_bank_lwr_up
+            action: reset
+
+  tmr_complete_drop_bank_blue_lwr_2:
+        start_value: 0  
+        end_value: 2
+        direction: up
+        tick_interval: 1s
+        start_running: no
+        control_events:
+          - event: logicblock_drop_bank_blue_lwr_count_complete
+            action: start
+          - event: timer_tmr_complete_drop_bank_blue_lwr_2_complete
+            action: reset  
+
+############ lower right drop bank ############
+######### Timed drop bank shot ################  
+  tmr_reset_drop_bank_red_lwr:
+        start_value: 0  #original game options Funtion 33: 6-15 seconds
+        end_value: 10
+        direction: up
+        tick_interval: 1s
+        start_running: no
+        control_events:
+          - event: lwr_red_bank_hit #lwr_blu_dropbank_shot_started
+            action: start
+          - event: lwr_red_bank_hit
+            action: restart       
+          - event: drop_target_bank_right_bank_lwr_up
+            action: reset
+
+  tmr_complete_drop_bank_red_lwr_2:
+        start_value: 0  
+        end_value: 2
+        direction: up
+        tick_interval: 1s
+        start_running: no
+        control_events:
+          - event: logicblock_drop_bank_red_lwr_count_complete
+            action: start
+          - event: timer_tmr_complete_drop_bank_red_lwr_2_complete
+            action: reset                  
+        
+            
+counters:
+  drop_bank_blue_lwr_count:
+    count_events: drop_target_bank_left_bank_lwr_down #{value==3}
+    events_when_hit: drop_bank_blue_lwr_count_hit
+    starting_count: 0
+    direction: up
+    persist_state: true
+    count_complete_value: 3
+    reset_on_complete: true
+    #enable_events:
+    #  - ball_started
+     # - initialize_dropbank_bottom
+    #  - timer_timer_down_mb_running_complete
+    #disable_events: timer_timer_down_mb_begin_complete
+    restart_events:
+      - ball_started
+      - initialize_dropbank_bottom
+      - logicblock_drop_bank_blue_lwr_count_complete
+
+  drop_bank_red_lwr_count:
+    count_events: drop_target_bank_right_bank_lwr_down #{value==3}
+    events_when_hit: drop_bank_red_lwr_count_hit
+    starting_count: 0
+    direction: up
+    persist_state: true
+    count_complete_value: 3
+    reset_on_complete: true
+    #enable_events:
+    #  - ball_started
+    #  - initialize_dropbank_bottom
+    #  - timer_timer_down_mb_running_complete
+    #disable_events: timer_timer_down_mb_begin_complete
+    restart_events:
+      - ball_started
+      - initialize_dropbank_bottom
+      - logicblock_drop_bank_red_lwr_count_complete
+              
+
+      
+show_player:
+
+############ lower left drop bank ############       
+  lwr_blu_drop_1_hit:
+    color_cycle_show:
+      loops: 2
+      speed: 10
+      priority: 12
+      show_tokens:
+        led: led_lf_lwr_blue_arrow_3
+        color1: blue
+        color2: green
+  lwr_blu_drop_2_hit:
+    color_cycle_show:
+      loops: 2
+      speed: 10
+      priority: 13
+      show_tokens:
+        led: led_lf_lwr_blue_arrow_2 
+        color1: blue
+        color2: green
+  lwr_blu_drop_3_hit:
+    color_cycle_show:
+      loops: 2
+      speed: 10
+      priority: 14
+      show_tokens:
+        led: led_lf_lwr_blue_arrow_1  
+        color1: blue
+        color2: green
+  lwr_blu_bank_hit:
+    color_cycle_speed_up_show:
+      loops: 1
+      speed: 5
+      priority: 15
+      show_tokens:
+        led: led_lwr_blue_drop_bank_down  
+        color1: blue
+        color2: green
+    color_cycle_speed_up_show_1:
+      loops: 1
+      speed: 5
+      priority: 16
+      show_tokens:
+        led: led_lwr_blue_drop_ambient  
+        color1: blue
+        color2: red      
+        
+  drop_target_bank_left_bank_lwr_down:
+    color_cycle_speed_up_show:
+      action: stop
+    color_cycle_speed_up_show_1:
+      action: stop
+    color_cycle_show:
+      loops: 10
+      speed: 14
+      priority: 2
+      show_tokens:
+        led: led_lwr_blue_drop_bank_down  
+        color1: blue
+        color2: green
+    color_cycle_show_1:
+      loops: 10
+      speed: 14
+      priority: 3
+      show_tokens:
+        led: led_lwr_blue_drop_ambient  
+        color1: blue
+        color2: red
+        
+  drop_target_bank_left_bank_lwr_up:
+    color_cycle_show:
+      loops: 10
+      speed: 14
+      priority: 4
+      show_tokens:
+        led: led_lwr_blue_drop_ambient  
+        color1: blue
+        color2: red
+        
+  #### Lower Left Extra Ball Shot Complete ####
+        
+  lwr_blu_left_extra_ball_enable:
+    color_cycle_show:
+      loops: 4
+      speed: 6
+      priority: 5
+      show_tokens:
+        led: led_lf_lwr_blue_arrow
+        color1: blue
+        color2: red
+
+############ lower right drop bank ############       
+  lwr_red_drop_1_hit:
+    color_cycle_show_2:
+      loops: 2
+      speed: 10
+      priority: 12
+      show_tokens:
+        led: led_rt_lwr_red_arrow_3
+        color1: red
+        color2: green
+  lwr_red_drop_2_hit:
+    color_cycle_show_2:
+      loops: 2
+      speed: 10
+      priority: 13
+      show_tokens:
+        led: led_rt_lwr_red_arrow_2 
+        color1: red
+        color2: green
+  lwr_red_drop_3_hit:
+    color_cycle_show_2:
+      loops: 2
+      speed: 10
+      priority: 14
+      show_tokens:
+        led: led_rt_lwr_red_arrow_1  
+        color1: red
+        color2: green
+  lwr_red_bank_hit:
+    color_cycle_speed_up_show_2:
+      loops: 1
+      speed: 5
+      priority: 15
+      show_tokens:
+        led: led_lwr_red_drop_bank_down  
+        color1: blue
+        color2: green
+    color_cycle_speed_up_show_3:
+      loops: 1
+      speed: 5
+      priority: 16
+      show_tokens:
+        led: led_lwr_red_drop_ambient  
+        color1: blue
+        color2: red      
+        
+  drop_target_bank_right_bank_lwr_down:
+    color_cycle_speed_up_show_2:
+      action: stop
+    color_cycle_speed_up_show_3:
+      action: stop
+    color_cycle_show:
+      loops: 10
+      speed: 14
+      priority: 2
+      show_tokens:
+        led: led_lwr_red_drop_bank_down  
+        color1: blue
+        color2: green
+    color_cycle_show_3:
+      loops: 10
+      speed: 14
+      priority: 3
+      show_tokens:
+        led: led_lwr_red_drop_ambient  
+        color1: blue
+        color2: red
+        
+  drop_target_bank_right_bank_lwr_up:
+    color_cycle_show_2:
+      loops: 10
+      speed: 14
+      priority: 4
+      show_tokens:
+        led: led_lwr_red_drop_ambient  
+        color1: blue
+        color2: red    
+
+  #### Lower Right Extra Ball Shot Complete ####
+        
+  lwr_red_right_extra_ball_enable:
+    color_cycle_show:
+      loops: 4
+      speed: 6
+      priority: 5
+      show_tokens:
+        led: led_rt_lwr_red_arrow
+        color1: blue
+        color2: red
+
+    
+light_player:
+
+############ lower left drop bank ############    
+    drop_bank_blue_lwr_count_hit{count==1}:    
+        led_lf_lwr_blue_arrow_1:
+            color: blue
+            fade: 500ms
+    drop_bank_blue_lwr_count_hit{count==2}:    
+        led_lf_lwr_blue_arrow_2:
+            color: blue
+            fade: 500ms
+    drop_bank_blue_lwr_count_hit{count==3}:    
+        led_lf_lwr_blue_arrow_3:
+            color: blue
+            fade: 500ms
+            
+    #timer_tmr_complete_drop_bank_blue_lwr_2_complete:
+    initialize_dropbank_bottom:
+        led_lf_lwr_blue_arrow_1:
+            color: off
+            fade: 2500ms
+        led_lf_lwr_blue_arrow_2:
+            color: off
+            fade: 2500ms
+        led_lf_lwr_blue_arrow_3:
+            color: off
+            fade: 2500ms
+    
+############ lower right drop bank ############    
+    drop_bank_red_lwr_count_hit{count==1}:    
+        led_rt_lwr_red_arrow_1:
+            color: red
+            fade: 500ms
+    drop_bank_red_lwr_count_hit{count==2}:    
+        led_rt_lwr_red_arrow_2:
+            color: red
+            fade: 500ms
+    drop_bank_red_lwr_count_hit{count==3}:    
+        led_rt_lwr_red_arrow_3:
+            color: red
+            fade: 500ms
+            
+    #timer_tmr_complete_drop_bank_red_lwr_2_complete:
+    initialize_dropbank_bottom.1:
+        led_rt_lwr_red_arrow_1:
+            color: off
+            fade: 2500ms
+        led_rt_lwr_red_arrow_2:
+            color: off
+            fade: 2500ms
+        led_rt_lwr_red_arrow_3:
+            color: off
+            fade: 2500ms  
+  
+variable_player:
+
+############ lower left drop bank ############
+
+  s_lwr_lf_blue_drop_target_1_active:
+    score: 1000 * current_player.pf_multiplier
+    
+  
+  s_lwr_lf_blue_drop_target_2_active:
+    score: 1000 * current_player.pf_multiplier
+    
+  
+  s_lwr_lf_blue_drop_target_3_active:
+    score: 1000 * current_player.pf_multiplier
+    
+############ lower right drop bank ############
+
+  s_lwr_rt_red_drop_target_1_active:
+    score: 1000 * current_player.pf_multiplier
+    
+  
+  s_lwr_rt_red_drop_target_2_active:
+    score: 1000 * current_player.pf_multiplier
+    
+  
+  s_lwr_rt_red_drop_target_3_active:
+    score: 1000 * current_player.pf_multiplier
+  

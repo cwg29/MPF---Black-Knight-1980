@@ -1,0 +1,309 @@
+#config_version=5
+##! mode: extra_ball
+# in modes/extra_ball
+
+####   BLACK KNIGHT  ####
+
+### H. X.BALL FEATURE ###
+# There are two possible ways to achieve an Extra Ball: one on the upper playfield, and one on the lower.
+
+# To light the first Extra Ball light (upper playfield), the player must complete the upper or lower playfield drop target 
+# banks three time each. Then shoot the ball through the left ramp u-turn on the upper playfield to score the Extra Ball.
+
+# The second Extra Ball is lit by completing all four drop target banks (upper and lower playfields) three times each. 
+# This lights the Extra Ball in the turn-around on the lower playfield.
+# One arrow in front of a drop target bank is lit each time the bank is completed.
+
+### Drop Target Awards should persist between balls.  Used AWARDS to track  ###
+
+
+
+mode:
+  start_events: start_mode_extra_ball
+  stop_events: mode_attract_starting
+  priority: 250
+  
+event_player:
+  mode_extra_ball_started: initialize_extra_ball
+  enable_first_extra_ball_shot: start_eb_timer_1
+  enable_all_extra_ball_shot: start_eb_timer_2
+  enable_all_extra_ball_shot_award: start_eb_timer_2
+  timer_timer_down_eb_1_complete: eb_timer_1_timed_out
+  timer_timer_down_eb_2_complete: eb_timer_2_timed_out
+  first_extra_ball_award_hit: extra_ball_award_achieved
+  second_extra_ball_award_hit: extra_ball_award_achieved
+  timer_timer_down_voice_eb_complete: eb_voice_call
+  
+  
+accruals:  # any order
+  extra_ball_accruals_upr:
+    events:
+      - upr_blu_left_extra_ball_enable
+      - upr_red_right_extra_ball_enable
+    events_when_complete: enable_upper_extra_ball_shot
+      
+  extra_ball_accruals_lwr:
+    events:
+      - lwr_blu_left_extra_ball_enable
+      - lwr_red_right_extra_ball_enable
+    events_when_complete: enable_lower_extra_ball_shot
+      
+  second_extra_ball_accruals_all:
+    events:
+      - upr_blu_left_extra_ball_enable
+      - upr_red_right_extra_ball_enable
+      - lwr_blu_left_extra_ball_enable
+      - lwr_red_right_extra_ball_enable
+    events_when_complete: enable_all_extra_ball_shot
+    
+  second_extra_ball_accruals_all_award:  #for tracking between balls
+    events:
+      - top_left_eb_lvl_3_achieved
+      - top_right_eb_lvl_3_achieved
+      - lwr_left_eb_lvl_3_achieved
+      - lwr_right_eb_lvl_3_achieved
+    events_when_complete: enable_all_extra_ball_shot_award
+      
+sequences:
+  first_extra_ball_sequence:  # upper OR lower
+    events:
+      - enable_upper_extra_ball_shot, enable_lower_extra_ball_shot
+    disable_on_complete: false
+    reset_on_complete: true
+    events_when_complete: enable_first_extra_ball_shot
+
+  
+    
+timers:  #extra_ball_extra_ball_eb_awarded
+  timer_down_eb_1:
+        start_value: 60
+        end_value: 0
+        direction: down
+        tick_interval: 1s
+        control_events:
+          - action: start
+            event: start_eb_timer_1
+          - action: reset
+            event: timer_timer_down_eb_1_complete
+            
+  timer_down_eb_2:
+        start_value: 60
+        end_value: 0
+        direction: down
+        tick_interval: 1s
+        control_events:
+          - action: start
+            event: start_eb_timer_2
+          - action: reset
+            event: timer_timer_down_eb_2_complete
+            
+  timer_down_voice_eb:
+        start_value: 2
+        end_value: 0
+        direction: down
+        tick_interval: 2s
+        control_events:
+          - action: start
+            event: extra_ball_award_achieved
+          - action: reset
+            event: timer_timer_down_voice_eb_complete
+            
+
+
+shots:
+  first_extra_ball_award:
+    switch: s_ro_upr_left_ramp
+    enable_events: start_eb_timer_1
+    disable_events:
+      - eb_timer_1_timed_out
+      - award_extra_ball_given
+      
+  second_extra_ball_award:
+    switch: s_turnaround
+    enable_events: start_eb_timer_2
+    disable_events:
+      - eb_timer_2_timed_out
+      - award_extra_ball_given
+      
+show_player:
+  start_eb_timer_1:
+    color_cycle_show:
+      loops: -1
+      speed: 8
+      priority: 11
+      show_tokens:
+        led: led_extra_ball  #upper U-Turn
+        color1: red
+        color2: blue
+    eb_light_show:
+      loops: 2
+      speed: 15
+        
+  timer_timer_down_eb_1_complete:
+    color_cycle_show:
+      action: stop
+      
+  start_eb_timer_2:
+    color_cycle_show:
+      loops: -1
+      speed: 8
+      priority: 11
+      show_tokens:
+        led: led_loop_ex_ball_wl  #upper U-Turn
+        color1: red
+        color2: blue
+    eb_light_show:
+      loops: 2
+      speed: 15
+        
+  timer_timer_down_eb_2_complete:
+    color_cycle_show:
+      action: stop
+      
+  extra_ball_award_achieved:
+    color_cycle_show:
+      action: stop
+        
+  extra_ball_award_achieved.1:
+    eb_light_show:
+      loops: 2
+      speed: 60
+
+    color_cycle_show:
+      loops: 10
+      speed: 10
+      priority: 12
+      show_tokens:
+        led: led_extra_ball, led_loop_ex_ball_wl  
+        color1: red
+        color2: off
+        
+  s_ro_upr_left_ramp_active:
+    color_cycle_show_1:
+      loops: 3
+      speed: 8
+      priority: 21
+      show_tokens:
+        led: led_extra_ball
+        color1: red
+        color2: off
+        
+  s_turnaround_active{current_player.eb_award_sound_2==1}:
+    color_cycle_show_1:
+      loops: 3
+      speed: 8
+      priority: 21
+      show_tokens:
+        led: led_loop_ex_ball_wl
+        color1: red
+        color2: off
+        
+  extra_ball_award_achieved.2:
+    extra_ball_segment_display:
+      loops: 1
+      speed: 1
+      priority: 2
+      
+  ball_starting{is_extra_ball}:
+    color_cycle_show:
+      loops: 6
+      speed: 5
+      priority: 22
+      show_tokens:
+        led: bb_shoot_again  
+        color1: yellow
+        color2: off
+        
+light_player:
+  #timer_timer_down_eb_1_started:
+  #  led_extra_ball:  
+  #          color: red
+  #          fade: 500ms
+  #timer_timer_down_eb_1_complete:
+  #  led_extra_ball: 
+  #          color: off
+  #          fade: 500ms
+  #award_extra_ball_given:
+  #  led_extra_ball:  
+  #          color: off
+            
+  extra_ball_extra_ball_eb_awarded:
+        bb_shoot_again:  # back box LED
+            color: yellow
+            fade: 500ms
+           
+            
+
+            
+coil_player:
+  extra_ball_award_hit: c_bell
+
+
+            
+variable_player:
+  s_ro_upr_left_ramp_active:
+    score: 500
+  extra_ball_award_achieved:
+    score: 5000
+    
+  mode_extra_ball_started:
+    eb_award_sound_1:
+      int: 0
+      action: set
+      
+  mode_extra_ball_started.1:
+    eb_award_sound_2:
+      int: 0
+      action: set
+      
+  timer_timer_down_eb_1_complete:
+    eb_award_sound_1:
+      int: 0
+      action: set
+      
+  timer_timer_down_eb_2_complete:
+    eb_award_sound_2:
+      int: 0
+      action: set
+    
+  start_eb_timer_1:
+    eb_award_sound_1:
+      int: 1
+      action: set
+      
+  start_eb_timer_2:
+    eb_award_sound_2:
+      int: 1
+      action: set
+      
+      
+      
+sound_player:
+
+  start_eb_timer_1:
+    crowd_cheer_voice:
+      action: play
+      
+  start_eb_timer_2:
+    crowd_cheer_voice:
+      action: play
+
+  s_ro_upr_left_ramp_active{current_player.eb_award_sound_1==0}:
+    drop_target_sound:
+      action: play
+  s_ro_upr_left_ramp_active{current_player.eb_award_sound_1==1}:
+    magna_save_bonus_sound:
+      action: play
+      
+  s_turnaround_active{current_player.eb_award_sound_2==0}:
+    drop_target_sound:
+      action: play
+  s_turnaround_active{current_player.eb_award_sound_2==1}:
+    magna_save_bonus_sound:
+      action: play
+      
+  timer_timer_down_voice_eb_complete:
+    extra_ball_voice:
+      action: play
+
+    

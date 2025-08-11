@@ -1,0 +1,16 @@
+#show_version=5
+##! show: lock_cycle_show
+- time: 0
+  lights:
+    (led_1): (color1)-f250ms
+    (led_3): (color2)-f250ms
+    
+- time: 1
+  lights:
+    (led_2): (color1)-f250ms
+    (led_1): (color2)-f250ms
+    
+- time: 2
+  lights:
+    (led_3): (color1)-f250ms
+    (led_2): (color2)-f250ms

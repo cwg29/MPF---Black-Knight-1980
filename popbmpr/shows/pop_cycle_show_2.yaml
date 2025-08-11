@@ -1,0 +1,41 @@
+#show_version=5
+##! show: pop_cycle_show_2
+- time: 0
+  lights:
+    (led_1): (color1)-f100ms
+    (led_8): (color2)-f100ms
+    
+- time: 1
+  lights:
+    (led_2): (color1)-f100ms
+    (led_1): (color2)-f100ms
+    
+- time: 2
+  lights:
+    (led_3): (color1)-f100ms
+    (led_2): (color2)-f100ms
+    
+- time: 3
+  lights:
+    (led_4): (color1)-f100ms
+    (led_3): (color2)-f100ms
+    
+- time: 4
+  lights:
+    (led_5): (color1)-f100ms
+    (led_4): (color2)-f100ms
+    
+- time: 5
+  lights:
+    (led_6): (color1)-f100ms
+    (led_5): (color2)-f100ms
+    
+- time: 6
+  lights:
+    (led_7): (color1)-f100ms
+    (led_6): (color2)-f100ms
+    
+- time: 7
+  lights:
+    (led_8): (color1)-f100ms
+    (led_7): (color2)-f100ms

@@ -1,0 +1,235 @@
+#config_version=5
+##! mode: mystery
+
+#BLACK KNIGHT
+
+### I. MYSTERY SCORE FEATURE
+# When the ball goes through the left flipper return lane (which may be assisted by Magna-Save), the center ramp is 
+# lit for a short time for Mystery Score. The Mystery Score is awarded upon completion of the center ramp when lit, 
+# and awards a random value of 20,000 to 99,000 points. (Contrary to today's hyper-inflated-score games, this is a
+# significant award).
+
+mode:
+  start_events: start_mode_mystery
+  stop_events: stop_mode_mystery
+  priority: 650
+  
+event_player:
+
+  s_ctr_ramp_gate_active{device.counters.mystery_count.value==0}:  mystery_count_0
+  s_ctr_ramp_gate_active{device.counters.mystery_count.value==1}:  mystery_count_1
+  s_ctr_ramp_gate_active{device.counters.mystery_count.value==2}:  mystery_count_2
+  s_ctr_ramp_gate_active{device.counters.mystery_count.value==3}:  mystery_count_3
+
+
+    
+shots:
+  left_inner_ro_shot:
+    switch: s_ro_left_lwr_in
+    #enable_events: mode_ball_starting_show_ended
+    #disable_events: start_ball_starting_show
+    profile: flash2
+    
+shot_profiles:
+  flash2:
+    states:
+      - name: unlit
+        show: "off"
+      - name: lit
+        show: "flash"
+
+timers:    
+  timer_down_mystery_shot:
+        start_value: 15
+        end_value: 0
+        direction: down
+        tick_interval: 1s
+        start_running: no
+        control_events:
+            - action: start
+              event: left_inner_ro_shot_hit  #{current_player.pf_spinner_multiplier==5}
+            - action: reset
+              event: timer_timer_down_mystery_shot_complete
+              
+
+show_player:
+
+  timer_timer_down_mystery_shot_started:       
+    color_cycle_speed_up_long_show:
+      loops: -1
+      speed: 5
+      priority: 15
+      show_tokens:
+        led: led_mystery_wl  
+        color1: red
+        color2: off
+        
+  timer_timer_down_mystery_shot_complete:
+    color_cycle_speed_up_long_show:
+       action: stop
+       
+  s_ctr_ramp_gate_active{current_player.pf_mystery_multiplier>1}:
+    color_cycle_speed_up_long_show:
+       action: stop
+    color_cycle_show:
+      loops: 3
+      speed: 8
+      priority: 17
+      show_tokens:
+        led: led_mystery
+        color1: red
+        color2: off
+    color_cycle_show_1:
+      loops: 3
+      speed: 8
+      priority: 18
+      show_tokens:
+        led: led_mystery_bb
+        color1: red
+        color2: yellow
+    color_cycle_show_2:
+      loops: 3
+      speed: 8
+      priority: 19
+      show_tokens:
+        led: led_warrior
+        color1: white
+        color2: blue
+    color_cycle_show_3:
+      loops: 3
+      speed: 8
+      priority: 19
+      show_tokens:
+        led: stick_gi
+        color1: blue
+        color2: red
+        
+  s_ro_left_lwr_in_active:
+    color_cycle_show:
+      loops: 3
+      speed: 8
+      priority: 20
+      show_tokens:
+        led: led_lf_10K_w_saved
+        color1: orange
+        color2: off
+        
+  s_ro_left_lwr_out_active:
+    color_cycle_show:
+      loops: 3
+      speed: 8
+      priority: 21
+      show_tokens:
+        led: led_lf_last_chance
+        color1: orange
+        color2: off
+  
+
+
+counters:
+  mystery_count:
+    count_events: s_ctr_ramp_gate_active
+    count_complete_value: 4
+    events_when_complete: mystery_count_finished
+    reset_on_complete: True
+    disable_on_complete: False
+    
+sequences:
+
+  mystery_0_sequence:
+    events:
+      - mystery_count_0
+      - left_inner_ro_shot_hit
+    disable_on_complete: false
+    reset_on_complete: true
+    
+  mystery_1_sequence:
+    events:
+      - mystery_count_1
+      - left_inner_ro_shot_hit
+    disable_on_complete: false
+    reset_on_complete: true
+    
+  mystery_2_sequence:
+    events:
+      - mystery_count_2
+      - left_inner_ro_shot_hit
+    disable_on_complete: false
+    reset_on_complete: true
+  
+  mystery_3_sequence:
+    events:
+      - mystery_count_3
+      - left_inner_ro_shot_hit
+    disable_on_complete: false
+    reset_on_complete: true
+
+    
+variable_player:
+
+  mode_mystery_started:
+    pf_mystery_multiplier:
+      int: 1
+      action: set
+      
+  timer_timer_down_mystery_shot_complete:
+    pf_mystery_multiplier:
+      int: 1
+      action: set
+     
+  #left_inner_ro_shot_hit{current_player.counter_mystery_count==0}:
+  logicblock_mystery_0_sequence_complete:
+    pf_mystery_multiplier:
+      int: 20
+      action: set  
+      
+  #left_inner_ro_shot_hit{current_player.counter_mystery_count==1}:
+  logicblock_mystery_1_sequence_complete:
+    pf_mystery_multiplier:
+      int: 50
+      action: set
+      
+  #left_inner_ro_shot_hit{current_player.counter_mystery_count==2}:
+  logicblock_mystery_2_sequence_complete:
+    pf_mystery_multiplier:
+      int: 75
+      action: set
+      
+  #left_inner_ro_shot_hit{current_player.counter_mystery_count==3}:
+  logicblock_mystery_3_sequence_complete:
+    pf_mystery_multiplier:
+      int: 99
+      action: set
+      
+  s_ctr_ramp_gate_active:
+    score: 1000 * current_player.pf_mystery_multiplier
+    
+
+
+
+      
+sound_player:
+  s_ctr_ramp_gate_active{current_player.pf_mystery_multiplier==1}: pop_sound
+  
+  #device.counters.spinner_rotations.value==1
+  
+  s_ctr_ramp_gate_active{current_player.pf_mystery_multiplier==20}:
+    mystery_bonus_sound:
+      action: play
+      
+  s_ctr_ramp_gate_active{current_player.pf_mystery_multiplier==50}:
+    mystery_bonus_sound:
+      action: play
+      
+  s_ctr_ramp_gate_active{current_player.pf_mystery_multiplier==75}:
+    mystery_bonus_sound:
+      action: play
+      
+  s_ctr_ramp_gate_active{current_player.pf_mystery_multiplier==99}:
+    mystery_bonus_sound:
+      action: play
+
+       
+ 
+   
+  

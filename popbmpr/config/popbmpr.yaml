@@ -1,0 +1,290 @@
+#config_version=5
+##! mode: popbmpr
+
+#BLACK KNIGHT
+
+mode:
+  start_events: start_mode_popbmpr
+  stop_events: stop_mode_popbmpr
+  priority: 350
+  
+event_player:
+  mode_popbmpr_started: initialize_popbmpr
+  
+  
+  
+shot_groups:
+  pop_bumper_score_change:
+    shots: pop_bumper
+    reset_events:
+      pop_bumper_score_change_on_complete: 200ms
+        
+shots:
+  pop_bumper:
+    switch: s_pop_bumper
+    profile: pop_flash_profile
+
+
+    
+shot_profiles:
+  pop_flash_profile:
+    states:
+      - name: off
+        show: off
+      - name: on
+        show: on
+        
+
+        
+show_player:
+
+###### ADD speed based on score
+  mode_popbmpr_started:
+    pop_cycle_show:
+      loops: -1
+      speed: 2
+      priority: 10
+      show_tokens:
+        led_1: led_pop_1
+        led_2: led_pop_2
+        led_3: led_pop_3
+        led_4: led_pop_4
+        led_5: led_pop_5
+        led_6: led_pop_6
+        led_7: led_pop_7
+        led_8: led_pop_8
+        color1: red
+        color2: off
+        
+  player_score{value>=10000}:
+    pop_cycle_show:
+      action: stop
+    pop_cycle_show_2:
+      loops: -1
+      speed: 4
+      priority: 10
+      show_tokens:
+        led_1: led_pop_1
+        led_2: led_pop_2
+        led_3: led_pop_3
+        led_4: led_pop_4
+        led_5: led_pop_5
+        led_6: led_pop_6
+        led_7: led_pop_7
+        led_8: led_pop_8
+        color1: red
+        color2: off
+        
+  player_score{value>=30000}:
+    pop_cycle_show_2:
+      action: stop
+    pop_cycle_show:
+      loops: -1
+      speed: 6
+      priority: 10
+      show_tokens:
+        led_1: led_pop_1
+        led_2: led_pop_2
+        led_3: led_pop_3
+        led_4: led_pop_4
+        led_5: led_pop_5
+        led_6: led_pop_6
+        led_7: led_pop_7
+        led_8: led_pop_8
+        color1: red
+        color2: off
+        
+  player_score{value>=60000}:
+    pop_cycle_show:
+      action: stop
+    pop_cycle_show_2:
+      loops: -1
+      speed: 8
+      priority: 10
+      show_tokens:
+        led_1: led_pop_1
+        led_2: led_pop_2
+        led_3: led_pop_3
+        led_4: led_pop_4
+        led_5: led_pop_5
+        led_6: led_pop_6
+        led_7: led_pop_7
+        led_8: led_pop_8
+        color1: red
+        color2: off
+        
+  player_score{value>=90000}:
+    pop_cycle_show_2:
+      action: stop
+    pop_cycle_show:
+      loops: -1
+      speed: 10
+      priority: 10
+      show_tokens:
+        led_1: led_pop_1
+        led_2: led_pop_2
+        led_3: led_pop_3
+        led_4: led_pop_4
+        led_5: led_pop_5
+        led_6: led_pop_6
+        led_7: led_pop_7
+        led_8: led_pop_8
+        color1: red
+        color2: off
+        
+  player_score{value>=120000}:
+    pop_cycle_show:
+      action: stop
+    pop_cycle_show_2:
+      loops: -1
+      speed: 12
+      priority: 10
+      show_tokens:
+        led_1: led_pop_1
+        led_2: led_pop_2
+        led_3: led_pop_3
+        led_4: led_pop_4
+        led_5: led_pop_5
+        led_6: led_pop_6
+        led_7: led_pop_7
+        led_8: led_pop_8
+        color1: red
+        color2: off
+        
+  player_score{value>=150000}:
+    pop_cycle_show_2:
+      action: stop
+    pop_cycle_show:
+      loops: -1
+      speed: 14
+      priority: 10
+      show_tokens:
+        led_1: led_pop_1
+        led_2: led_pop_2
+        led_3: led_pop_3
+        led_4: led_pop_4
+        led_5: led_pop_5
+        led_6: led_pop_6
+        led_7: led_pop_7
+        led_8: led_pop_8
+        color1: red
+        color2: off
+        
+  player_score{value>=180000}:
+    pop_cycle_show:
+      action: stop
+    pop_cycle_show_2:
+      loops: -1
+      speed: 16
+      priority: 10
+      show_tokens:
+        led_1: led_pop_1
+        led_2: led_pop_2
+        led_3: led_pop_3
+        led_4: led_pop_4
+        led_5: led_pop_5
+        led_6: led_pop_6
+        led_7: led_pop_7
+        led_8: led_pop_8
+        color1: red
+        color2: off
+        
+  player_score{value>=210000}:
+    pop_cycle_show_2:
+      action: stop
+    pop_cycle_show:
+      loops: -1
+      speed: 18
+      priority: 10
+      show_tokens:
+        led_1: led_pop_1
+        led_2: led_pop_2
+        led_3: led_pop_3
+        led_4: led_pop_4
+        led_5: led_pop_5
+        led_6: led_pop_6
+        led_7: led_pop_7
+        led_8: led_pop_8
+        color1: red
+        color2: off
+        
+  player_score{value>=240000}:
+    pop_cycle_show:
+      action: stop
+    pop_cycle_show_2:
+      loops: -1
+      speed: 19
+      priority: 10
+      show_tokens:
+        led_1: led_pop_1
+        led_2: led_pop_2
+        led_3: led_pop_3
+        led_4: led_pop_4
+        led_5: led_pop_5
+        led_6: led_pop_6
+        led_7: led_pop_7
+        led_8: led_pop_8
+        color1: red
+        color2: off
+        
+  player_score{value>=270000}:
+    pop_cycle_show_2:
+      action: stop
+    pop_cycle_show:
+      loops: -1
+      speed: 20
+      priority: 10
+      show_tokens:
+        led_1: led_pop_1
+        led_2: led_pop_2
+        led_3: led_pop_3
+        led_4: led_pop_4
+        led_5: led_pop_5
+        led_6: led_pop_6
+        led_7: led_pop_7
+        led_8: led_pop_8
+        color1: red
+        color2: off
+        
+  player_score{value>=300000}:
+    pop_cycle_show:
+      action: stop
+    pop_cycle_show_3:
+      loops: -1
+      speed: 4
+      priority: 10
+      show_tokens:
+        led: led_pop
+        color1: red
+        color2: off
+        color3: blue
+        
+        
+  s_pop_bumper_active:
+    color_cycle_show:
+      loops: 0
+      speed: 11
+      priority: 20
+      show_tokens:
+        led: led_pop 
+        color1: white
+        color2: off
+
+        
+
+  
+              
+variable_player:
+      
+  pop_bumper_hit:
+    score: 1000 * current_player.pf_multiplier
+  s_left_sling_shot_active:
+    score: 100 * current_player.pf_multiplier
+  s_right_sling_shot_active:
+    score: 100 * current_player.pf_multiplier
+    
+sound_player:   #add super pop bumper mode on special
+
+  s_pop_bumper_active: pop_sound
+    
+    

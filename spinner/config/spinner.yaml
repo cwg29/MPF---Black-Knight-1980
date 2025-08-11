@@ -1,0 +1,367 @@
+#config_version=5
+##! mode: spinner
+
+#BLACK KNIGHT
+
+### I. SPINNER FEATURE
+# The spinner scores 100 to 25000 when lit.  Hitting right inner rollover lites spinner for 10 seconds
+# When the ball goes through the right flipper return lane (which may also be assisted by Magna-Save), the spinner is 
+# lit for a short time for 5,000 points per spin. A well-placed shot through the spinner can award as much as 100,000 
+# points!
+
+mode:
+  start_events: start_mode_spinner
+  stop_events: stop_mode_spinner
+  priority: 700
+
+#show_player:  
+#  spinner_bk_spinner_hit:
+#    spinner_light_show:
+#      loops: 10
+#      speed: 10
+#      priority: 10
+#    spinner_segment_display:
+#      loops: 10
+#      speed: 1
+#      priority: 2
+      
+# in a game mode the player needs to spin the spinner 10 times
+counters:
+  spinner_rotations:
+    count_events: spinner_bk_spinner_hit
+    count_complete_value: 20
+    events_when_complete: spinner_spun_up_finished
+    restart_events: spinner_bk_spinner_idle
+    
+
+    
+shots:
+  right_inner_ro_shot:
+    switch: s_ro_right_lwr_in
+    #enable_events: mode_ball_starting_show_ended
+    #disable_events: start_ball_starting_show
+    profile: flash
+    
+shot_profiles:
+  flash:
+    states:
+      - name: unlit
+        show: "off"
+      - name: lit
+        show: "flash"
+
+timers:    
+  timer_down_spinner_shot:
+        start_value: 15
+        end_value: 0
+        direction: down
+        tick_interval: 1s
+        start_running: no
+        control_events:
+            - action: start
+              event: right_inner_ro_shot_hit  #{current_player.pf_spinner_multiplier==5}
+            - action: reset
+              event: timer_timer_down_spinner_shot_complete
+              
+  timer_spinner_hit:
+        start_value: 0
+        end_value: 2
+        direction: up
+        tick_interval: 0.8s
+        start_running: no
+        control_events:
+            - action: start
+              event: spinner_bk_spinner_hit
+            - action: restart
+              event: spinner_bk_spinner_hit            
+            - action: reset
+              event: timer_timer_spinner_hit_complete
+
+show_player:
+
+  timer_timer_down_spinner_shot_started:       
+    color_cycle_speed_up_long_show:
+      loops: -1
+      speed: 5
+      priority: 15
+      show_tokens:
+        led: led_spinner_25k_wl  
+        color1: red
+        color2: off
+        
+  timer_timer_down_spinner_shot_complete:
+    color_cycle_speed_up_long_show:
+       action: stop
+       
+  spinner_bk_spinner_hit{current_player.pf_spinner_multiplier>1}:
+    color_cycle_speed_up_long_show:
+       action: stop
+    color_cycle_show:
+      loops: 0
+      speed: 8
+      priority: 17
+      show_tokens:
+        led: led_upr_sword_gi
+        color1: yellow
+        color2: white
+    color_cycle_show_1:
+      loops: 0
+      speed: 8
+      priority: 18
+      show_tokens:
+        led: led_mystery_bb
+        color1: red
+        color2: yellow
+    color_cycle_show_2:
+      loops: 0
+      speed: 8
+      priority: 19
+      show_tokens:
+        led: led_knight
+        color1: white
+        color2: red
+        
+  s_ro_right_lwr_in_active:
+    color_cycle_show:
+      loops: 3
+      speed: 8
+      priority: 20
+      show_tokens:
+        led: led_rt_10K_w_saved
+        color1: orange
+        color2: off
+        
+  s_ro_right_lwr_out_active:
+    color_cycle_show:
+      loops: 3
+      speed: 8
+      priority: 21
+      show_tokens:
+        led: led_rt_last_chance
+        color1: orange
+        color2: off
+
+
+light_player:
+
+  timer_timer_spinner_hit_complete{current_player.pf_spinner_multiplier==25}:
+    gi:
+        color: blue
+        fade: 2000ms
+    bb_gi:
+        color: blue
+        fade: 2000ms        
+  spinner_bonus_end_sound_finished:
+    gi:
+        color: white
+        fade: 500ms 
+    bb_gi:
+        color: white
+        fade: 500ms         
+    
+variable_player:
+
+  mode_spinner_started:
+    pf_spinner_multiplier:
+      int: 1
+      action: set
+      
+  timer_timer_down_spinner_shot_complete:
+    pf_spinner_multiplier:
+      int: 1
+      action: set
+     
+  right_inner_ro_shot_hit:
+    pf_spinner_multiplier:
+      int: 25
+      action: set  
+      
+  spinner_bk_spinner_hit:
+    score: 100 * current_player.pf_spinner_multiplier
+    
+#sequences:
+#  spinner_seq:
+#    restart_events: left_blue_trap_release_set
+#    persist_state: true
+#    start_enabled: true
+#    events:
+#      - lagoon_trap_ready_to_be_set
+#      - standup_target_shot_hit
+
+
+      
+sound_player:
+  spinner_bk_spinner_hit{current_player.pf_spinner_multiplier==1}: spinner_sound
+  
+  #device.counters.spinner_rotations.value==1
+  
+  spinner_bk_spinner_hit{current_player.pf_spinner_multiplier==25 and device.counters.spinner_rotations.value==0}:
+    spinner_bonus_sound_1:
+      action: play
+
+       
+  spinner_bk_spinner_hit.1{current_player.pf_spinner_multiplier==25 and device.counters.spinner_rotations.value==1}:
+    spinner_bonus_sound_1:
+      action: stop
+      fade_out: 0.1s    
+    spinner_bonus_sound_2:
+      action: play
+
+      
+  spinner_bk_spinner_hit.2{current_player.pf_spinner_multiplier==25 and device.counters.spinner_rotations.value==2}:
+    spinner_bonus_sound_2:
+      action: stop
+      fade_out: 0.1s    
+    spinner_bonus_sound_3:
+      action: play
+
+      
+  spinner_bk_spinner_hit.3{current_player.pf_spinner_multiplier==25 and device.counters.spinner_rotations.value==3}:
+    spinner_bonus_sound_3:
+      action: stop
+      fade_out: 0.1s    
+    spinner_bonus_sound_4:
+      action: play
+
+      
+  spinner_bk_spinner_hit.4{current_player.pf_spinner_multiplier==25 and device.counters.spinner_rotations.value==4}:
+    spinner_bonus_sound_4:
+      action: stop
+      fade_out: 0.1s     
+    spinner_bonus_sound_5:
+      action: play
+
+      
+  spinner_bk_spinner_hit.5{current_player.pf_spinner_multiplier==25 and device.counters.spinner_rotations.value==5}:
+    spinner_bonus_sound_5:
+      action: stop
+      fade_out: 0.1s     
+    spinner_bonus_sound_6:
+      action: play
+
+      
+  spinner_bk_spinner_hit.6{current_player.pf_spinner_multiplier==25 and device.counters.spinner_rotations.value==6}:
+    spinner_bonus_sound_6:
+      action: stop
+      fade_out: 0.1s     
+    spinner_bonus_sound_7:
+      action: play
+
+      
+  spinner_bk_spinner_hit.7{current_player.pf_spinner_multiplier==25 and device.counters.spinner_rotations.value==7}:
+    spinner_bonus_sound_7:
+      action: stop
+      fade_out: 0.1s     
+    spinner_bonus_sound_8:
+      action: play
+
+      
+  spinner_bk_spinner_hit.8{current_player.pf_spinner_multiplier==25 and device.counters.spinner_rotations.value==8}:
+    spinner_bonus_sound_8:
+      action: stop
+      fade_out: 0.1s     
+    spinner_bonus_sound_9:
+      action: play
+
+      
+  spinner_bk_spinner_hit.9{current_player.pf_spinner_multiplier==25 and device.counters.spinner_rotations.value==9}:
+    spinner_bonus_sound_9:
+      action: stop
+      fade_out: 0.1s     
+    spinner_bonus_sound_10:
+      action: play
+
+      
+  spinner_bk_spinner_hit.10{current_player.pf_spinner_multiplier==25 and device.counters.spinner_rotations.value==10}:
+    spinner_bonus_sound_10:
+      action: stop
+      fade_out: 0.1s     
+    spinner_bonus_sound_11:
+      action: play
+
+      
+  spinner_bk_spinner_hit.11{current_player.pf_spinner_multiplier==25 and device.counters.spinner_rotations.value==11}:
+    spinner_bonus_sound_11:
+      action: stop
+      fade_out: 0.1s     
+    spinner_bonus_sound_12:
+      action: play
+
+      
+  spinner_bk_spinner_hit.12{current_player.pf_spinner_multiplier==25 and device.counters.spinner_rotations.value==12}:
+    spinner_bonus_sound_12:
+      action: stop
+      fade_out: 0.1s     
+    spinner_bonus_sound_13:
+      action: play
+
+      
+  spinner_bk_spinner_hit.13{current_player.pf_spinner_multiplier==25 and device.counters.spinner_rotations.value==13}:
+    spinner_bonus_sound_13:
+      action: stop
+      fade_out: 0.1s     
+    spinner_bonus_sound_14:
+      action: play
+
+      
+  spinner_bk_spinner_hit.14{current_player.pf_spinner_multiplier==25 and device.counters.spinner_rotations.value==14}:
+    spinner_bonus_sound_14:
+      action: stop
+      fade_out: 0.1s     
+    spinner_bonus_sound_15:
+      action: play
+
+      
+  spinner_bk_spinner_hit.15{current_player.pf_spinner_multiplier==25 and device.counters.spinner_rotations.value==15}:
+    spinner_bonus_sound_15:
+      action: stop
+      fade_out: 0.1s     
+    spinner_bonus_sound_16:
+      action: play
+
+      
+  spinner_bk_spinner_hit.16{current_player.pf_spinner_multiplier==25 and device.counters.spinner_rotations.value==16}:
+    spinner_bonus_sound_16:
+      action: stop
+      fade_out: 0.1s     
+    spinner_bonus_sound_17:
+      action: play
+
+  
+  spinner_bk_spinner_hit.17{current_player.pf_spinner_multiplier==25 and device.counters.spinner_rotations.value==17}:
+    spinner_bonus_sound_17:
+      action: stop
+      fade_out: 0.1s     
+    spinner_bonus_sound_18:
+      action: play
+
+      
+  spinner_bk_spinner_hit.18{current_player.pf_spinner_multiplier==25 and device.counters.spinner_rotations.value==18}:
+    spinner_bonus_sound_18:
+      action: stop
+      fade_out: 0.1s     
+    spinner_bonus_sound_19:
+      action: play
+
+      
+  spinner_bk_spinner_hit.19{current_player.pf_spinner_multiplier==25 and device.counters.spinner_rotations.value==19}:
+    spinner_bonus_sound_19:
+      action: stop
+      fade_out: 0.1s     
+    spinner_bonus_sound_20:
+      action: play
+
+      
+  spinner_bk_spinner_hit.20{current_player.pf_spinner_multiplier==25 and device.counters.spinner_rotations.value==20}:
+    spinner_bonus_sound_20:
+      action: stop
+      fade_out: 0.1s     
+    spinner_bonus_sound_21:
+      action: play
+
+      
+  timer_timer_spinner_hit_complete{current_player.pf_spinner_multiplier==25}:
+    spinner_bonus_end_sound:
+      action: play
+   
+  

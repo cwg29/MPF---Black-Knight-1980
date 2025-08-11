@@ -1,0 +1,217 @@
+#config_version=5
+##! mode: magna_save
+
+#BK
+
+
+mode:
+    start_events: start_mode_magna_save
+    stop_events: stop_mode_magna_save
+    priority: 400
+    #start_events: start_base #, ball_starting{ball>1}  #ball_will_start     # in normal mode use ball_started instead
+
+event_player:
+  mode_magna_save_started: initialize_magna_save
+  
+  
+sequences:
+
+  magna_save_left_sequence:
+    events:
+      - blu_left_magna_save_enable
+      - s_magna_save_left_active
+    disable_on_complete: false
+    reset_on_complete: true
+    
+  magna_save_left_bonus_sequence:  #score 5 adv bonus on a magna-save of ball
+    events:
+      - timer_magna_save_magnet_left_bonus_timer_started
+      - s_ro_left_lwr_in_active
+    reset_events: timer_magna_save_magnet_left_bonus_timer_complete
+    disable_on_complete: false
+    reset_on_complete: true
+    
+  magna_save_right_sequence:
+    events:
+      - red_right_magna_save_enable
+      - s_magna_save_right_active
+    disable_on_complete: false
+    reset_on_complete: true
+    
+  magna_save_right_bonus_sequence:  #score 5 adv bonus on a magna-save of ball
+    events:
+      - timer_magna_save_magnet_right_bonus_timer_started
+      - s_ro_right_lwr_in_active
+    reset_events: timer_magna_save_magnet_right_bonus_timer_complete
+    disable_on_complete: false
+    reset_on_complete: true
+
+    
+timers:
+
+  magna_save_magnet_left_timer:
+    start_value: 6   #original magna-save setting 3-9 seconds
+    end_value: 0
+    direction: down
+    tick_interval: 1s
+    control_events:
+      - action: start
+        event: logicblock_magna_save_left_sequence_complete
+      - action: reset
+        event: timer_magna_save_magnet_left_timer_complete
+        
+  magna_save_magnet_left_bonus_timer:
+    start_value: 3   #score 5 adv bonus on a magna-save of ball
+    end_value: 0
+    direction: down
+    tick_interval: 1s
+    control_events:
+      - action: start
+        event: timer_magna_save_magnet_left_timer_complete
+      - action: reset
+        event: timer_magna_save_magnet_left_bonus_timer_complete
+
+        
+  magna_save_magnet_right_timer:
+    start_value: 6   #original magna-save setting 3-9 seconds
+    end_value: 0
+    direction: down
+    tick_interval: 1s
+    control_events:
+      - action: start
+        event: logicblock_magna_save_right_sequence_complete
+      - action: reset
+        event: timer_magna_save_magnet_right_timer_complete
+        
+  magna_save_magnet_right_bonus_timer:
+    start_value: 3   #score 5 adv bonus on a magna-save of ball
+    end_value: 0
+    direction: down
+    tick_interval: 1s
+    control_events:
+      - action: start
+        event: timer_magna_save_magnet_right_timer_complete
+      - action: reset
+        event: timer_magna_save_magnet_right_bonus_timer_complete
+
+        
+show_player:
+
+  timer_magna_save_magnet_left_timer_started:       
+    color_cycle_speed_up_show:
+      loops: -1
+      speed: 5
+      priority: 15
+      show_tokens:
+        led: led_lf_magna_save  
+        color1: orange
+        color2: off
+        
+  timer_magna_save_magnet_left_timer_complete:
+    color_cycle_speed_up_show:
+       action: stop
+       
+  timer_magna_save_magnet_right_timer_started:       
+    color_cycle_speed_up_show_2:
+      loops: -1
+      speed: 5
+      priority: 15
+      show_tokens:
+        led: led_rt_magna_save  
+        color1: orange
+        color2: off
+        
+  timer_magna_save_magnet_right_timer_complete:
+    color_cycle_speed_up_show_2:
+       action: stop
+       
+  timer_magna_save_magnet_left_bonus_timer_started:
+    color_cycle_speed_up_show:
+      loops: 0
+      speed: 5
+      priority: 16
+      show_tokens:
+        led: led_lf_10K_w_saved  
+        color1: orange
+        color2: off
+        
+  logicblock_magna_save_left_bonus_sequence_complete:
+    color_cycle_show:
+      loops: 2
+      speed: 10
+      priority: 17
+      show_tokens:
+        led: led_lf_10K_w_saved
+        color1: orange
+        color2: green
+        
+  timer_magna_save_magnet_right_bonus_timer_started:
+    color_cycle_speed_up_show:
+      loops: 0
+      speed: 5
+      priority: 16
+      show_tokens:
+        led: led_rt_10K_w_saved  
+        color1: orange
+        color2: off
+        
+  logicblock_magna_save_right_bonus_sequence_complete:
+    color_cycle_show:
+      loops: 2
+      speed: 10
+      priority: 17
+      show_tokens:
+        led: led_rt_10K_w_saved
+        color1: orange
+        color2: green
+
+       
+light_player:
+
+########## Lower banks #########
+
+    drop_target_bank_left_bank_lwr_down:
+        led_lf_magna_save:
+            color: orange
+            fade: 500ms
+    
+            
+    drop_target_bank_right_bank_lwr_down:
+        led_rt_magna_save:
+            color: orange
+            fade: 500ms
+
+            
+########## Upper banks #########
+
+    drop_target_bank_left_bank_upr_down:
+        led_lf_magna_save:
+            color: orange
+            fade: 500ms
+            
+    drop_target_bank_right_bank_upr_down:
+        led_rt_magna_save:
+            color: orange
+            fade: 500ms
+            
+#################################
+
+    timer_magna_save_magnet_left_timer_started:
+        led_lf_magna_save:
+            color: off
+            fade: 500ms
+            
+    timer_magna_save_magnet_right_timer_started:
+        led_rt_magna_save:
+            color: off
+            fade: 500ms
+            
+variable_player:
+
+  logicblock_magna_save_left_bonus_sequence_complete:
+    score: 8000 * current_player.pf_multiplier
+    
+  logicblock_magna_save_right_bonus_sequence_complete:
+    score: 8000 * current_player.pf_multiplier
+            
+            

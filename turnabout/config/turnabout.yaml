@@ -1,0 +1,117 @@
+#config_version=5
+##! mode: turnabout
+# in modes/turnabout
+
+######### Black Knight - Multiplier Code ###############
+
+mode:
+  start_events: start_mode_turnabout
+  stop_events: stop_mode_turnabout
+  priority: 200
+
+shot_groups:
+  turnabout:
+    shots: turnabout_1
+    reset_events:
+      turnabout_on_complete: 3s
+    #rotate_left_events: s_left_flipper_active
+    #rotate_right_events: s_right_flipper_active
+    
+counters:
+  lane_change_mltp_complete_count:
+    count_events: turnabout_on_complete
+    events_when_hit: mltp_lanes_done
+    starting_count: 0
+    direction: up
+    persist_state: false
+
+shots:
+  turnabout_1:
+    switch: s_turnaround
+    profile: turnabout_profile
+    show_tokens:
+      led: led_lwr_loop_gi
+
+
+shot_profiles:
+  turnabout_profile:
+    states:
+      - name: off
+        show: off
+      - name: on
+        show: on
+
+show_player:
+  turnabout_on_complete:
+    flash:
+      loops: 10
+      speed: 10
+      show_tokens:
+        lights: led_lwr_loop_gi, led_knight
+  #mltp_lanes_done{count==2}:
+    #Playfield_2x_on:
+    #show_tokens:
+      #lights: led_2x
+  #mltp_lanes_done{count==3}:
+    #led_3x_on:
+      #show_tokens:
+        #lights: led_2x, led_3x        
+light_player:
+  mltp_lanes_done{count==1}:
+        l_led21:  #led_2x
+            color: blue
+            fade: 500ms
+  mltp_lanes_done{count==2}:
+        l_led20:  #led_3x
+            color: blue
+            fade: 500ms
+  mltp_lanes_done{count==3}:
+        l_led19:  #led_4x
+            color: blue
+            fade: 500ms
+  mltp_lanes_done{count==4}:
+        l_led18:  #led_5x
+            color: blue
+            fade: 500ms
+
+variable_player:
+  turnabout_on_hit:
+    score: 100 * current_player.pf_multiplier
+  lane_change_off_hit:
+    score: 500 * current_player.pf_multiplier
+  lane_change_on_complete:
+    score: 5000 * current_player.pf_multiplier
+  mode_turnabout_started:
+    pf_bonus_multiplier:
+      int: 1
+      action: set
+    pf_multiplier:
+      int: 1
+      action: set
+
+  mltp_lanes_done{count==1}:
+    pf_bonus_multiplier:
+      int: 2
+      action: set
+   
+  mltp_lanes_done{count==2}:
+    pf_bonus_multiplier:
+      int: 3
+      action: set
+    
+  mltp_lanes_done{count==3}:
+    pf_bonus_multiplier:
+      int: 4
+      action: set
+    
+  mltp_lanes_done{count==4}:
+    pf_bonus_multiplier:
+      int: 5
+      action: set
+    
+  turnabout_complete:
+    score: 1000 * current_player.pf_multiplier
+    
+    
+
+

@@ -1,0 +1,33 @@
+#show_version=5
+- duration: 5s
+  segment_displays:
+    neoSegRight:
+      text: "EXTRA    BALL  "
+      transition:
+        type: push
+        direction: left
+        text: " <<< "
+        # text: "***"
+    
+
+
+
+#- duration: 4s
+#  segment_displays:
+#    neoSegTop:
+ #     text: "LAST    GAME "
+ #     transition:
+#        type: push
+#        direction: left
+#        text: " <<< "
+ #   neoSegBot:    
+#      text: "{(machine|high_score):>8,d}"
+#      transition:
+#        type: push
+#        direction: right
+#        text: " >>> "
+
+
+
+
+

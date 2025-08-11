@@ -1,0 +1,375 @@
+#config_version=5
+##! mode: multiball
+
+#BLACK KNIGHT
+
+####### Multiball ########
+
+# Multiball play on Black Knight involves two or three balls. Balls are locked on the upper playfield, behind the left
+# drop target bank. Balls are released for Multiball play by locking three balls on upper playfield, or by locking one or 
+# two balls on upper playfield, and another ball in the kickout hole on the lower playfield (behind the right drop target 
+# bank).
+
+# There is no time limit for locking balls for Multiball play. The game can be adjusted to allow lit "LOCK" lights to
+# remain lit from ball to ball, or will reset with each new ball played (default). The latter is the more difficult setting, 
+# and requires the player to lock two or three balls on the upper playfield during the course of one ball-in-play, in 
+# order to achieve Multiball play. See the game's adjustments in the Instruction Booklet for more details.
+
+# During Multiball, all scoring is multiplied by the number of balls on the playfield (2X, or 3X).
+
+
+
+mode:
+  start_events: start_mode_multiball
+  stop_events: stop_mode_multiball
+  priority: 600
+
+event_player:
+  mode_multiball_started: initialize_multiball
+  ball_starting{ball==1}: mb_initialize
+  multiball_lock_mb_upper_full: mb_ready_to_be_set
+  mb_open_shot_on_complete: mb_open
+  logicblock_cave_drop_seq_3_complete: mb_open
+  timer_mb_start_escape_timer_complete: multiball_release_ready
+  timer_mb_multiball_show_timer_complete: reset_mb
+  multiball_lock_mb_upper_locked_ball{total_balls_locked==1}: mb_upper_ball_locked_1
+  multiball_lock_mb_upper_locked_ball{total_balls_locked==2}: mb_upper_ball_locked_2
+  multiball_lock_mb_upper_locked_ball{total_balls_locked==3}: mb_upper_ball_locked_3
+  logicblock_mb_locked_1_seq_complete: mb_multiball_complete
+  logicblock_mb_locked_2_seq_complete: mb_multiball_complete
+  logicblock_mb_locked_3_seq_complete: mb_multiball_complete
+  ball_hold_mb_lower_full: mb_lower_ball_active
+  #ball_hold_mb_lower_full: mb_lower_start_upper_ready
+  
+  
+ball_holds:
+  mb_lower:
+    balls_to_hold: 1
+    hold_devices: bd_bottom_kickout
+    enable_events: initialize_multiball, ball_starting
+    release_one_if_full_events: timer_mb_lower_drop_timer_complete
+
+multiball_locks:
+  mb_upper:
+    balls_to_lock: 3
+    lock_devices: bd_top_kickout
+    enable_events: initialize_multiball, ball_starting
+    disable_events: mb_multiball_complete
+    reset_all_counts_events: reset_mb
+    reset_count_for_current_player_events: timer_mb_multiball_show_timer_complete
+    #locked_ball_counting_strategy: physical_only
+    
+sequences:
+  mb_locked_1_seq:
+#    restart_events: left_green_trap_release_set
+    persist_state: true
+    start_enabled: true
+    events:
+      - mb_upper_ball_locked_1
+      - mb_lower_ball_active
+    disable_on_complete: false
+    reset_on_complete: true    
+    
+    #logicblock_mb_locked_1_seq_complete:
+      
+  mb_locked_2_seq:
+#    restart_events: left_green_trap_release_set
+    persist_state: true
+    start_enabled: true
+    events:
+      - mb_upper_ball_locked_1
+      - mb_upper_ball_locked_2
+      - mb_lower_ball_active
+    disable_on_complete: false
+    reset_on_complete: true
+      
+  mb_locked_3_seq:
+#    restart_events: left_green_trap_release_set
+    persist_state: true
+    start_enabled: true
+    events:
+      - mb_upper_ball_locked_1
+      - mb_upper_ball_locked_2
+      - mb_upper_ball_locked_3
+    disable_on_complete: false
+    reset_on_complete: true
+
+
+timers:
+  mb_lower_drop_timer: # eject lower trapped ball
+    start_value: 1
+    end_value: 0
+    direction: down
+    tick_interval: 1s
+    control_events:
+      - action: start
+        event:  mb_lower_ball_active
+      - action: reset
+        event: timer_mb_lower_drop_timer_complete
+        
+  mb_lower_drop_timer4: # drop targets raise and lower is staggered
+    start_value: 1
+    end_value: 0
+    direction: down
+    tick_interval: 1s
+    control_events:
+      - action: start
+        event: timer_mb_mltplr_trg_timer_complete
+      - action: reset
+        event: timer_mb_lower_drop_timer4_complete
+
+  mb_raise_drop_timer:  # drop targets raise and lower is staggered
+    start_value: 1
+    end_value: 0
+    direction: down
+    tick_interval: 1s
+    control_events:
+      - action: start
+        event: mb_ready_to_be_set
+      - action: reset
+        event: timer_mb_rasie_drop_timer_complete
+        
+  mb_video_timer:  # to stop video
+    start_value: 5
+    end_value: 0
+    direction: down
+    tick_interval: 1s
+    control_events:
+      - action: start
+        event: mb_ready_to_be_set
+      - action: reset
+        event: timer_mb_video_timer_complete
+        
+  mb_start_escape_timer:  # a short pause before releasing the locked ball
+    start_value: 1
+    end_value: 0
+    direction: down
+    tick_interval: 1s
+    control_events:
+      - action: start
+        event: mb_multiball_complete  #green_plus1x_5x_mltpr
+      - action: reset
+        event: timer_mb_start_escape_timer_complete
+
+  mb_multiball_show_timer:  # time that multiball will be active
+    start_value: 1
+    end_value: 20
+    direction: up
+    tick_interval: 1s
+    control_events:
+      - action: start
+        event: timer_mb_start_escape_timer_complete
+      - action: reset
+        event: timer_mb_multiball_show_timer_complete
+        
+  mb_mltplr_trg_timer:  # reset multiplier targets after ball escape
+    start_value: 1
+    end_value: 4
+    direction: up
+    tick_interval: 1s
+    control_events:
+      - action: start
+        event: timer_mb_start_escape_timer_complete
+      - action: reset
+        event: timer_mb_mltplr_trg_timer_complete
+
+
+shots:
+  lwr_kickout_shot:
+    switch: s_lwr_eject_hole
+    profile: lwr_kickout_profile
+
+  
+    
+shot_profiles:
+  lwr_kickout_profile:
+    #advance_on_hit: false
+    states:
+      - name: off
+        show: off
+      - name: lit
+        show: flash
+      - name: down
+        show: on
+
+shot_groups:
+  mb_open_shot:
+    shots: lwr_kickout_shot
+    reset_events:
+      mb_open_shot_on_complete: 2s
+      
+
+light_player:
+
+  mb_upper_ball_locked_1:
+    led_lock_1:
+      priority: 5
+      color: green
+      fade: 500ms
+    led_multiball_wl:
+      priority: 5
+      color: green
+      fade: 500ms
+  mb_upper_ball_locked_2:
+    led_lock_2:
+      priority: 5
+      color: green
+      fade: 500ms
+  mb_upper_ball_locked_3:
+    led_lock_3:
+      priority: 5
+      color: green
+      fade: 500ms
+
+#  mb_ready_to_be_set:
+#    led_multiball_wl:
+#      priority: 4
+#      color: green
+#      fade: 500ms
+
+#  timer_mb_start_escape_timer_complete:
+#    led_multiball_wl:
+#      priority: 4
+#      color: off
+#      fade: 500ms      
+      
+#  mb_multiball_complete:
+#    led_multiball_wl:
+#      color: yellow
+#      fade: 500ms
+      
+
+#  timer_mb_multiball_show_timer_complete:
+#   led_multiball_wl:
+#      color: off
+#      fade: 500ms
+    #gi:
+      #color: white
+      #fade: 500ms
+    #bb_gi:
+      #color: white
+      #fade: 500ms
+
+show_player:
+
+  initialize_multiball:
+    lock_cycle_show:
+      loops: -1
+      speed: 3
+      priority: 1
+      show_tokens:
+        led_1: led_lock_3
+        led_2: led_lock_2
+        led_3: led_lock_1
+        color1: green
+        color2: off
+
+  #mb_ready_to_be_set: # gi light show when ball locked
+  #  gi_backbox_flash_show:
+  #    loops: 4
+  #    speed: 12
+      
+  #mb_ready_to_be_set.1:
+  #  mb_segment_display:
+  #    loops: 3
+  #    speed: 1
+  #    priority: 2
+      
+  #mb_ready_to_be_set.2: # flash arrow "to release ball"
+  #  color_cycle_show:
+  #    loops: 3
+  #    speed: 10
+  #    priority: 10
+  #    show_tokens:
+  #      led: led_lock_1
+  #      color1: red
+  #      color2: green
+
+  #mb_lower_shot_hit:
+  #  color_cycle_show:
+  #    loops: 3
+  #    speed: 10
+  #    priority: 10
+  #    show_tokens:
+  #      led: ###led_lock_1
+  #      color1: red
+  #      color2: green
+
+  
+  mb_upper_ball_locked_1:
+    mb_lock_1_segment_display:
+      loops: 1
+      speed: 1
+      priority: 2
+  mb_upper_ball_locked_2:
+    mb_lock_1_segment_display:
+      loops: 1
+      speed: 1
+      priority: 2
+  mb_upper_ball_locked_3:
+    mb_lock_1_segment_display:
+      loops: 1
+      speed: 1
+      priority: 2
+  multiball_release_ready:
+    mb_segment_display:
+      loops: 3
+      speed: 1
+      priority: 2
+
+  
+        
+  timer_mb_multiball_show_timer_started:
+    mb_light_show:
+      loops: -1
+      speed: 10
+#      priority: 12
+
+#    gi_backbox_cycle_show_3:  # gi show during multiball
+#      loops: -1
+#      speed: 30
+      
+  timer_mb_multiball_show_timer_complete:
+    mb_light_show:
+      action: stop
+#    gi_backbox_cycle_show_3:
+#      action: stop
+
+#  timer_mb_start_escape_timer_started: # gi light show to get ready for ball escape from cave
+#    gi_backbox_flash_show:
+#      loops: 20
+#      speed: 44
+      
+#  timer_mb_start_escape_timer_complete:
+#    color_cycle_show:
+#      action: stop
+
+variable_player:
+      
+  mb_upper_ball_locked_1:
+    score: 1000 * current_player.pf_multiplier
+  mb_upper_ball_locked_2:
+    score: 1000 * current_player.pf_multiplier
+  mb_upper_ball_locked_3:
+    score: 1000 * current_player.pf_multiplier
+  mb_lower_ball_active:
+    score: 1000 * current_player.pf_multiplier
+    
+sound_player:   
+
+   mb_upper_ball_locked_1: ball_lock_sound
+   mb_upper_ball_locked_2: ball_lock_sound
+   mb_upper_ball_locked_3: ball_lock_sound
+   mb_lower_ball_active: ball_trap_sound
+   
+   balldevice_bd_top_kickout_ejecting_ball: ball_trap_sound
+
+
+
+  
+        
+
+      
+
+
+
