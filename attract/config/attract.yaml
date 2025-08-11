@@ -1,0 +1,103 @@
+#config_version=5
+##! show: attract_display_loop
+##! mode: attract
+#BLACK KNIGHT
+
+
+timers:
+  attract_callout_timer:  # time that multiball will be active
+    start_value: 1
+    end_value: 600 #seconds
+    direction: up
+    tick_interval: 1s    
+    control_events:
+      - action: start
+        event: mode_attract_started
+      - action: reset
+        event: timer_attract_callout_timer_complete
+    restart_on_complete: true
+
+show_player:
+    mode_attract_started: attract_display_loop
+    mode_attract_started.1:
+        attract_light_show:
+            speed: 30
+        attract_segment_loop:
+            speed: 1 
+        
+#! segment_displays:
+#!   display1:
+#!     number: 1
+
+
+#segment_display_player:
+  #mode_attract_started.1:
+    #neoSegP4:
+      #action: add
+      #text: FATHOM
+      #priority: 1000
+      ##expire: 200s
+      ##transition:
+        ##type: push
+        ##direction: right
+        ##text: " *** "
+      ##transition_out:
+        ##type: push
+        ##direction: right
+        ##text: " *** "
+    #neoSegP1:
+      #action: add
+      #text: Player 1
+     # priority: 1000
+    #neoSegP2:
+      #action: add
+      #text: Player 2
+      #priority: 1000
+    #neoSegball:
+      #action: add
+      #text: 34
+      #priority: 1000
+    #neoSegcredit:
+      #action: add
+      #text: 12
+      #priority: 1000
+    #neoSegP3:
+      #action: add
+      #text: Ready!
+      #priority: 1000
+    
+        
+
+sound_player:
+    mode_attract_started.2: game_over_voice
+    mode_attract_started.3:
+      intro_fathom_boot:
+        action: play
+        fade_in: 1s
+        loops: 1
+    timer_attract_callout_timer_complete.2: attract_voice
+    timer_attract_callout_timer_complete.3:
+      intro_fathom_boot:
+        action: play
+        fade_in: 1s
+        loops: 1
+ #  mode_attract_stopping:
+   #   ym_slow_fast:
+   #     action: stop
+   #     fade_out: 1s
+
+        
+#event_player:
+    #s_startbutton_active: sw_add_player
+    
+#coil_player:
+  #mode_attract_started: c_drop_target_grn_1X_drop
+  #mode_attract_started.1: c_drop_target_grn_3X_drop
+  #mode_attract_started.3: c_drop_target_blu_1X_drop
+  #mode_attract_started.4: c_drop_target_blu_3X_drop
+  
+  
+  #cave_trap_ready_to_be_set: c_drop_target_grn_1X
+  #cave_trap_raise_drop_timer_done: c_drop_target_grn_3X
+
+

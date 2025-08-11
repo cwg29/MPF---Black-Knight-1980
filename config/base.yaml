@@ -1,0 +1,1632 @@
+#config_version=5
+##! mode: base
+
+#BLACK KNIGHT
+
+
+mode:
+    start_events: ball_will_start #{ball>1}
+    stop_events: ball_will_stop
+    priority: 100
+    #start_events: start_base #, ball_starting{ball>1}  #ball_will_start     # in normal mode use ball_started instead
+
+      
+
+
+event_player:
+  mode_base_started:
+    #- start_mode_skillshot
+    - start_mode_awards  #priority 175
+    - start_mode_turnabout   #priority 200
+    - start_mode_extra_ball  #priority 250
+    - start_mode_bonus_collect  #priority 300
+    - start_mode_popbmpr   #priority 350
+    - start_mode_magna_save  #priority 400
+    - start_mode_dropbank_top  #priority 500
+    - start_mode_dropbank_bottom  #priority 550    
+    - start_mode_multiball   #priority 600
+    - start_mode_mystery   #priority 650
+    - start_mode_spinner   #priority 700
+    #- start_mode_spec_lanes
+    #- start_mode_high_score
+    - initialize_base  #priority 100
+    
+  player_dp_music_value{value==0}: stop_DP_music_1
+  player_dp_music_value{value==1}: start_DP_music_1
+    
+
+
+queue_relay_player:
+
+    ball_starting{current_player.ball==1}:
+        post: start_ball_1_starting_voice_show
+        wait_for: mode_ball_1_starting_voice_show_ended
+    ball_ending:
+        post: start_ball_ending_show
+        wait_for: timer_bonus_collect_timer2_complete  #mode_bonus_collect_show_ended
+    ball_ended{current_player.ball==3 and not is_extra_ball}:
+        post: start_ball_ending_voice_show
+        wait_for: mode_ball_ending_voice_show_ended    
+    
+show_player:
+
+    start_ball_1_starting_voice_show:
+        ball_1_starting_voice_show:
+            loops: 0
+            events_when_stopped: mode_ball_1_starting_voice_show_ended
+            
+    start_ball_ending_show:
+        ball_ending_show:
+            loops: 0
+            speed: 5
+            events_when_stopped: mode_ball_ending_show_ended
+            
+    start_ball_ending_voice_show:
+        ball_ending_voice_show:
+            loops: 0
+            speed: 5
+            events_when_stopped: mode_ball_ending_voice_show_ended
+            
+            
+ ### Show Player - Run the segment displays with player score values  ###
+ ########################################################################
+
+    ball_started{player==1 and (ball>1 or is_extra_ball==True)}:
+        P1_scoreFlash:
+            show_tokens:
+                txt: "{(players[0].score):>8,d}"
+            key: scoreFlash
+            priority: 2
+            speed: 3
+    ball_started{player==2 and (ball>1 or is_extra_ball==True)}:
+        P2_scoreFlash:
+            show_tokens:
+                txt: "{(players[1].score):>8,d}"
+            key: scoreFlash
+            priority: 2
+            speed: 3
+    ball_started{player==3 and (ball>1 or is_extra_ball==True)}:
+        P3_scoreFlash:
+            show_tokens:
+                txt: "{(players[2].score):>8,d}"
+            key: scoreFlash
+            priority: 2
+            speed: 3
+    ball_started{player==4 and (ball>1 or is_extra_ball==True)}:
+        P4_scoreFlash:
+            show_tokens:
+                txt: "{(players[3].score):>8,d}"
+            key: scoreFlash
+            priority: 2
+            speed: 3
+
+    ball_started{player!=1}:
+        P1_score:
+            show_tokens:
+                txt: "{(players[0].score):>8,d}"
+            key: p1score
+    ball_started{player!=2 and game.num_players > 1}:
+        P2_score:
+            show_tokens:
+                txt: "{(players[1].score):>8,d}"
+            key: p2score
+    ball_started{player!=3 and game.num_players > 2}:
+        P3_score:
+            show_tokens:
+                txt: "{(players[2].score):>8,d}"
+            key: p3score
+    ball_started{player!=4 and game.num_players > 3}:
+        P4_score:
+            show_tokens:
+                txt: "{(players[3].score):>8,d}"
+            key: p4score
+    ball_started{player!=2 and game.num_players > 1 and players[1].score == 0}:
+        P2_score:
+            show_tokens:
+                txt: "      00"
+            key: p2score0
+            priority: 3
+    ball_started{player!=3 and game.num_players > 2 and players[2].score == 0}:
+        P3_score:
+            show_tokens:
+                txt: "      00"
+            key: p3score0
+            priority: 3
+    ball_started{player!=4 and game.num_players > 3 and players[3].score == 0}:
+        P4_score:
+            show_tokens:
+                txt: "      00"
+            key: p4score0
+            priority: 3
+
+    player_score{player_num==1 and value>0}:
+        scoreFlash: stop
+        P1_score:
+            show_tokens:
+                txt: "{(players[0].score):>8,d}"
+            key: p1score
+    player_score{player_num==2 and value>0}:
+        scoreFlash: stop
+        P2_score:
+            show_tokens:
+                txt: "{(players[1].score):>8,d}"
+            key: p2score
+    player_score{player_num==3 and value>0}:
+        scoreFlash: stop
+        P3_score:
+            show_tokens:
+                txt: "{(players[2].score):>8,d}"
+            key: p3score
+    player_score{player_num==4 and value>0}:
+        scoreFlash: stop
+        P4_score:
+            show_tokens:
+                txt: "{(players[3].score):>8,d}"
+            key: p4score
+
+    ball_started{player==1 and ball==1 and is_extra_ball==False}:
+        P1_scoreFlash:
+            show_tokens:
+                txt: "      00"
+            key: scoreFlash
+            priority: 3
+            speed: 3
+    ball_started{player==2 and ball==1 and is_extra_ball==False}:
+        P2_scoreFlash:
+            show_tokens:
+                txt: "      00"
+            key: scoreFlash
+            priority: 3
+            speed: 3
+    ball_started{player==3 and ball==1 and is_extra_ball==False}:
+        P3_scoreFlash:
+            show_tokens:
+                txt: "      00"
+            key: scoreFlash
+            priority: 3
+            speed: 3
+    ball_started{player==4 and ball==1 and is_extra_ball==False}:
+        P4_scoreFlash:
+            show_tokens:
+                txt: "      00"
+            key: scoreFlash
+            priority: 3
+            speed: 3
+            
+    player_added{num==2}:
+        P2_score:
+            show_tokens:
+                txt: "      00"
+            key: p2scoreadd
+            priority: 3
+    player_added{num==3}:
+        P3_score:
+            show_tokens:
+                txt: "      00"
+            key: p3scoreadd
+            priority: 3
+    player_added{num==4}:
+        P4_score:
+            show_tokens:
+                txt: "      00"
+            key: p4scoreadd
+            priority: 3
+            
+    #single_player_ball_started:
+    ball_started:
+        credit_display:
+            show_tokens:
+                txt: "{(machine.credit_units):>2,d}"
+        ball_display:
+            show_tokens:
+                txt: "{(players[0].ball):>2,d}"
+
+            
+            
+            
+            
+            
+    
+shows:
+
+    ball_1_starting_voice_show:
+        - duration: 3s
+    ball_ending_show:
+        - duration: 10s
+    ball_ending_voice_show:
+        - duration: 5s
+        
+        
+        
+#####################################################        
+###  Shows - Segment display show score values   ####
+#####################################################
+    
+    P1_score:
+        - duration: -1
+          segment_displays:
+            neoSegP1:
+                text: (txt)
+    P2_score:
+        - duration: -1
+          segment_displays:
+            neoSegP2:
+                text: (txt)
+    P3_score:
+        - duration: -1
+          segment_displays:
+            neoSegP3:
+                text: (txt)
+    P4_score:
+        - duration: -1
+          segment_displays:
+            neoSegP4:
+                text: (txt)
+    P1_scoreFlash:
+        - duration: 0.75
+          segment_displays:
+            neoSegP1:
+                text: (txt)
+        - duration: 0.25
+          segment_displays:
+            neoSegP1:
+                text: "        "
+    P2_scoreFlash:
+        - duration: 0.75
+          segment_displays:
+            neoSegP2:
+                text: (txt)
+        - duration: 0.25
+          segment_displays:
+            neoSegP2:
+                text: "        "
+    P3_scoreFlash:
+        - duration: 0.75
+          segment_displays:
+            neoSegP3:
+                text: (txt)
+        - duration: 0.25
+          segment_displays:
+            neoSegP3:
+                text: "        "
+    P4_scoreFlash:
+        - duration: 0.75
+          segment_displays:
+            neoSegP4:
+                text: (txt)
+        - duration: 0.25
+          segment_displays:
+            neoSegP4:
+                text: "        "
+                
+    ball_display:
+        - duration: -1
+          segment_displays:
+            neoSegball:
+                text: (txt)
+
+    credit_display:
+        - duration: -1
+          segment_displays:
+            neoSegcredit:
+                text: (txt)
+
+        
+    
+light_player:
+
+    mode_base_started:
+        gi:
+            color: white
+            fade: 500ms
+        bb_gi:
+            color: white
+            fade: 500ms        
+        stick_gi:
+            color: red
+            fade: 500ms        
+        led_apron:
+            color: yellow
+            fade: 500ms            
+        led_warrior:
+            color: blue
+            fade: 500ms            
+        led_knight:
+            color: red
+            fade: 500ms            
+        led_mystery_bb:
+            color: yellow
+            fade: 500ms          
+        bb_bk:
+            color: red
+            fade: 500ms          
+            
+            
+sounds:
+  add_coin_sound:
+    file: add_coin_sound.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    priority: 2
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+              
+  slingshot_sound:
+    file: slingshot_sound.wav
+    track: sfx
+    volume: 1.0
+    simultaneous_limit: 2
+    max_que_time: 0s
+    priority: 2
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.001 sec
+              attenuation: 0.05
+              release_point: 0.95 sec
+              release: 0.5 sec
+              
+  ball_lock_sound:
+    file: ball_lock_sound.wav
+    track: sfx
+    volume: 0.9
+    simultaneous_limit: 1
+    max_que_time: 0s
+    priority: 2
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.001 sec
+              attenuation: 0.05
+              release_point: 0.95 sec
+              release: 0.5 sec
+              
+  ball_trap_sound:
+    file: ball_trap_sound.wav
+    track: sfx
+    volume: 0.9
+    simultaneous_limit: 1
+    max_que_time: 0s
+    priority: 2
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.001 sec
+              attenuation: 0.05
+              release_point: 0.95 sec
+              release: 0.5 sec
+    
+  spinner_sound:
+    file: pop_bumper_spinner.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 4
+    max_que_time: 0s
+    priority: 2
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+              
+  magna_save_bonus_sound:
+    file: magna_save_bonus.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 3
+    max_que_time: 0s
+    priority: 2
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+              
+  mystery_bonus_sound:
+    file: mystery_bonus.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 3
+    max_que_time: 0s
+    priority: 2
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+    
+################# Spinner Bonus Sounds ratchets up as count goes up!!! As by original design. So Cool    
+
+  spinner_bonus_sound_1:
+    file: spinner_bonus_1.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    priority: 2
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_2:
+    file: spinner_bonus_2.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_3:
+    file: spinner_bonus_3.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_4:
+    file: spinner_bonus_4.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_5:
+    file: spinner_bonus_5.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_6:
+    file: spinner_bonus_6.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_7:
+    file: spinner_bonus_7.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_8:
+    file: spinner_bonus_8.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_9:
+    file: spinner_bonus_9.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_10:
+    file: spinner_bonus_10.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_11:
+    file: spinner_bonus_11.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_12:
+    file: spinner_bonus_12.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_13:
+    file: spinner_bonus_13.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_14:
+    file: spinner_bonus_14.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_15:
+    file: spinner_bonus_15.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_16:
+    file: spinner_bonus_16.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_17:
+    file: spinner_bonus_17.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_18:
+    file: spinner_bonus_18.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_19:
+    file: spinner_bonus_19.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_20:
+    file: spinner_bonus_20.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_21:
+    file: spinner_bonus_21.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_22:
+    file: spinner_bonus_22.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_23:
+    file: spinner_bonus_23.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_24:
+    file: spinner_bonus_24.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_25:
+    file: spinner_bonus_25.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_26:
+    file: spinner_bonus_26.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_27:
+    file: spinner_bonus_27.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_28:
+    file: spinner_bonus_28.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_29:
+    file: spinner_bonus_29.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_30:
+    file: spinner_bonus_30.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  spinner_bonus_sound_31:
+    file: spinner_bonus_31.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+              
+  spinner_bonus_end_sound:
+    file: spinner_bonus_end.wav
+    events_when_stopped: spinner_bonus_end_sound_finished
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+              
+              ######### END OF SPINNER ###########
+  
+  drop_target_sound:
+    file: drop_target_sound.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    priority: 2
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  pop_sound:
+    file: pop_bumper.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    priority: 2
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  horse_trot_sound:
+    file: horse_trot.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    priority: 2
+    events_when_stopped: horse_trot_sound_ended
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+  horse_trot_short_sound:
+    file: horse_trot_short.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    priority: 2
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+              
+  drop_target_timer_sound:
+    file: drop_target_time_down_2.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 2
+    max_que_time: 0s
+    priority: 2
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+              
+  drop_target_complete_3_sound:
+    file: drop_target_complete_3.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    priority: 2
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+              
+  bonus_sound:
+    file: bonus_collect.wav
+    track: sfx
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    priority: 2
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+              
+
+
+###############  BACKGROUND LOOP MUSIC #################              
+              
+  play_active_loop_sound_1:
+    file: 065-Black_Knight.wav
+    track: music
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    priority: 3
+  play_active_loop_sound_2:
+    file: 066-Black_Knight.wav
+    track: music
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    priority: 3    
+  play_active_loop_sound_3:
+    file: 067-Black_Knight.wav
+    track: music
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    priority: 3         
+  play_active_loop_sound_4:
+    file: 068-Black_Knight.wav
+    track: music
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    priority: 3   
+  play_active_loop_sound_5:
+    file: 069-Black_Knight.wav
+    track: music
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    priority: 3    
+  play_active_loop_sound_6:
+    file: 070-Black_Knight.wav
+    track: music
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    priority: 3     
+  play_active_loop_sound_7:
+    file: 071-Black_Knight.wav
+    track: music
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    priority: 3 
+  play_active_loop_sound_8:
+    file: 072-Black_Knight.wav
+    track: music
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    priority: 3       
+  play_active_loop_sound_9:
+    file: 073-Black_Knight.wav
+    track: music
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    priority: 3   
+  play_active_loop_sound_10:
+    file: 074-Black_Knight.wav
+    track: music
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    priority: 3
+  play_active_loop_sound_11:
+    file: 075-Black_Knight.wav
+    track: music
+    volume: 0.8
+    simultaneous_limit: 1
+    max_que_time: 0s
+    priority: 3       
+  #play_active_loop_sound_12:  ####  Deep Purple - "Black Night"   ####
+    #file: Black_Knight_DP_all.wav
+    #track: music
+    #volume: 0.8
+    #streaming: true
+    #max_que_time: 0s
+    #priority: 4
+
+
+
+######################## VOICE ############################              
+              
+  game_start_voice_1:
+    file: defend_thyself_knight.wav
+    track: sfx
+    Volume: 0.9
+    simultaneous_limit: 1
+    priority: 3
+  game_start_voice_2:
+    file: i_ch_thee_to_fight_me.wav
+    track: sfx
+    Volume: 0.9
+    simultaneous_limit: 1
+    priority: 3
+  game_start_voice_3:
+    file: u_cannot_fight_and_win.wav
+    track: sfx
+    Volume: 0.9
+    simultaneous_limit: 1
+    priority: 3
+  game_start_voice_4:
+    file: i_will_slay_u_my_enemy.wav
+    track: sfx
+    Volume: 0.9
+    simultaneous_limit: 1
+    priority: 3
+  game_start_voice_5:
+    file: the_bk_will_win_again.wav
+    track: sfx
+    Volume: 0.9
+    simultaneous_limit: 1
+    priority: 3
+  game_start_voice_6:
+    file: the_bk_will_slay_you.wav
+    track: sfx
+    Volume: 0.9
+    simultaneous_limit: 1
+    priority: 3
+  game_start_voice_7:
+    file: fight_against_me_the_bk.wav
+    track: sfx
+    Volume: 0.9
+    simultaneous_limit: 1
+    priority: 3
+  game_start_voice_8:
+    file: i_will_slay_thee_knight.wav
+    track: sfx
+    Volume: 0.9
+    simultaneous_limit: 1
+    priority: 3
+  game_over_voice:
+    file: game_end_1.wav
+    track: sfx
+    Volume: 0.9
+    simultaneous_limit: 1
+    priority: 3
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+              
+  crowd_cheer_voice:
+    file: crowd_cheer.wav
+    track: sfx
+    Volume: 0.9
+    simultaneous_limit: 1
+    priority: 3
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+              
+  extra_ball_voice:
+    file: fight_me_again_knight.wav
+    track: sfx
+    Volume: 0.9
+    simultaneous_limit: 1
+    priority: 3
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.001 sec
+              attenuation: 0.1
+              release_point: 0.09 sec
+              release: 0.05 sec
+              
+  rematch_voice:
+    file: will_u_ch_the_bk_again.wav
+    track: sfx
+    Volume: 0.9
+    simultaneous_limit: 1
+    priority: 3
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.001 sec
+              attenuation: 0.1
+              release_point: 0.09 sec
+              release: 0.05 sec
+              
+  attract_voice:
+    file: attract.wav
+    track: sfx
+    Volume: 0.9
+    simultaneous_limit: 1
+    priority: 3
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+    
+  DP_1_voice:
+    file: BK_DP_short.wav
+    track: sfx
+    Volume: 0.9
+    simultaneous_limit: 1
+    priority: 3
+    ducking:
+              target: music
+              delay: 0
+              attack: 0.01 sec
+              attenuation: 0.1
+              release_point: 0.9 sec
+              release: 0.5 sec
+    
+    
+sound_pools:
+  ball_start_callout:
+    type: random_force_all
+    track: voice
+    sounds:
+      - game_start_voice_1
+      - game_start_voice_2
+      - game_start_voice_3
+      - game_start_voice_4
+      - game_start_voice_5
+      - game_start_voice_6
+      - game_start_voice_7
+      - game_start_voice_8
+      
+  ball_save_callout:
+    type: random_force_all
+    track: voice
+    sounds:
+      - extra_ball_voice
+      - game_start_voice_6
+      - game_start_voice_8
+    
+    
+    
+sound_player:
+
+  start_ball_1_starting_voice_show: ball_start_callout
+  start_ball_ending_voice_show: game_over_voice
+
+  s_startbutton_active: add_coin_sound
+  s_lwr_lf_blue_drop_target_1_active: drop_target_sound
+  s_lwr_lf_blue_drop_target_2_active: drop_target_sound
+  s_lwr_lf_blue_drop_target_3_active: drop_target_sound
+  s_lwr_rt_red_drop_target_1_active: drop_target_sound
+  s_lwr_rt_red_drop_target_2_active: drop_target_sound
+  s_lwr_rt_red_drop_target_3_active: drop_target_sound
+  s_upr_lf_blue_drop_target_1_active: drop_target_sound
+  s_upr_lf_blue_drop_target_2_active: drop_target_sound
+  s_upr_lf_blue_drop_target_3_active: drop_target_sound
+  s_upr_rt_red_drop_target_1_active: drop_target_sound
+  s_upr_rt_red_drop_target_2_active: drop_target_sound
+  s_upr_rt_red_drop_target_3_active: drop_target_sound
+  s_shooter_lane_eject_active: horse_trot_sound
+  s_left_sling_shot_active: slingshot_sound 
+  s_right_sling_shot_active: slingshot_sound
+  s_ro_left_lwr_out_active: horse_trot_short_sound
+  s_ro_right_lwr_out_active: horse_trot_short_sound
+  s_ro_right_lwr_in_active: horse_trot_short_sound
+  s_ro_left_lwr_in_active: horse_trot_short_sound
+  #s_turnaround_active: drop_target_sound
+  #s_ctr_ramp_gate_active: pop_sound
+  logicblock_magna_save_left_bonus_sequence_complete: magna_save_bonus_sound
+  logicblock_magna_save_right_bonus_sequence_complete: magna_save_bonus_sound
+  
+  timer_timer_down_rematch_complete: rematch_voice
+  timer_timer_down_ball_save_complete: ball_save_callout
+  
+  playfield_active:
+    horse_trot_sound:
+      action: stop
+      fade_out: 2s
+      loops: -1
+     
+  horse_trot_sound_ended:  
+    play_active_loop_sound_1:
+      action: play
+      fade_in: 2s
+      loops: -1
+      
+  ball_starting{ball==2}:
+    play_active_loop_sound_1:
+      action: play
+      fade_in: 1s
+      loops: -1
+  ball_starting{ball==3}:
+    play_active_loop_sound_1:
+      action: play
+      fade_in: 1s
+      loops: -1
+  ball_ending:
+    play_active_loop_sound_1:
+      action: stop
+      fade_out: 1s
+    play_active_loop_sound_2:
+      action: stop
+      fade_out: 1s
+    play_active_loop_sound_3:
+      action: stop
+      fade_out: 1s
+    play_active_loop_sound_4:
+      action: stop
+      fade_out: 1s
+    play_active_loop_sound_5:
+      action: stop
+      fade_out: 1s
+    play_active_loop_sound_6:
+      action: stop
+      fade_out: 1s
+    play_active_loop_sound_7:
+      action: stop
+      fade_out: 1s
+    play_active_loop_sound_8:
+      action: stop
+      fade_out: 1s
+    play_active_loop_sound_9:
+      action: stop
+      fade_out: 1s
+    play_active_loop_sound_10:
+      action: stop
+      fade_out: 1s
+    play_active_loop_sound_11:
+      action: stop
+      fade_out: 1s
+    play_active_loop_sound_12:
+      action: stop
+      fade_out: 1s
+
+
+################ ramp up background music based on score ##################      
+  player_score{value>=10000}:
+    play_active_loop_sound_1:
+      action: stop
+      fade_out: 1s
+    play_active_loop_sound_2:
+      action: play
+      fade_in: 1s
+      loops: -1
+  player_score{value>=30000}:
+    play_active_loop_sound_2:
+      action: stop
+      fade_out: 1s
+    play_active_loop_sound_3:
+      action: play
+      fade_in: 1s
+      loops: -1
+  player_score{value>=60000}:
+    play_active_loop_sound_3:
+      action: stop
+      fade_out: 1s
+    play_active_loop_sound_4:
+      action: play
+      fade_in: 1s
+      loops: -1
+  player_score{value>=90000}:
+    play_active_loop_sound_4:
+      action: stop
+      fade_out: 1s
+    play_active_loop_sound_5:
+      action: play
+      fade_in: 1s
+      loops: -1
+  player_score{value>=120000}:
+    play_active_loop_sound_5:
+      action: stop
+      fade_out: 1s
+    play_active_loop_sound_6:
+      action: play
+      fade_in: 1s
+      loops: -1
+  player_score{value>=150000}:
+    play_active_loop_sound_6:
+      action: stop
+      fade_out: 1s
+    play_active_loop_sound_7:
+      action: play
+      fade_in: 1s
+      loops: -1
+  player_score{value>=180000}:
+    play_active_loop_sound_7:
+      action: stop
+      fade_out: 1s
+    play_active_loop_sound_8:
+      action: play
+      fade_in: 1s
+      loops: -1
+  player_score{value>=210000}:
+    play_active_loop_sound_8:
+      action: stop
+      fade_out: 1s
+    play_active_loop_sound_9:
+      action: play
+      fade_in: 1s
+      loops: -1
+  player_score{value>=240000}:
+    play_active_loop_sound_9:
+      action: stop
+      fade_out: 1s
+    play_active_loop_sound_10:
+      action: play
+      fade_in: 1s
+      loops: -1
+  player_score{value>=270000}:
+    play_active_loop_sound_10:
+      action: stop
+      fade_out: 1s
+    play_active_loop_sound_11:
+      action: play
+      fade_in: 1s
+      loops: -1
+  #player_score{value>=300000}:
+    #play_active_loop_sound_11:
+      #action: stop
+      #fade_out: 1s
+  #start_DP_music_1: play_active_loop_sound_12   
+  start_DP_music_1:
+    DP_1_voice:
+      action: play
+      fade_in: 1s
+      loops: 0
+  stop_DP_music_1:
+    DP_1_voice:
+      action: stop
+      fade_out: 1s
+      
+  timer_bonus_collect_timer_started:
+    drop_target_timer_sound:
+      action: stop
+  
+      
+      
+  #############  dropbank_bottom mode sounds - START ###############
+  
+############# lower left dropbank ##########  
+  timer_tmr_reset_drop_bank_blue_lwr_started:
+    drop_target_timer_sound:
+      action: play
+      fade_in: 1s
+      loops: 1
+  drop_target_bank_left_bank_lwr_down:
+    drop_target_timer_sound:
+      action: stop
+      #fade_out: 1s      
+    drop_target_complete_3_sound:
+      action: play
+      #fade_out: 1s
+      loops: 1
+      
+  drop_target_bank_left_bank_lwr_up:
+    drop_target_timer_sound:
+      action: stop
+      #fade_out: 1s
+      loops: 1
+    drop_target_complete_3_sound:
+      action: stop
+      fade_out: 0.5s
+      
+  lwr_blu_dropbank_shot_timeout:
+    drop_target_timer_sound:
+      action: stop
+      
+  
+      
+############# lower right dropbank ##########  
+  timer_tmr_reset_drop_bank_red_lwr_started:
+    drop_target_timer_sound:
+      action: play
+      fade_in: 1s
+      loops: 1
+  drop_target_bank_right_bank_lwr_down:
+    drop_target_timer_sound:
+      action: stop
+      #fade_out: 1s      
+    drop_target_complete_3_sound:
+      action: play
+      #fade_out: 1s
+      loops: 1
+      
+  drop_target_bank_right_bank_lwr_up:
+    drop_target_timer_sound:
+      action: stop
+      #fade_out: 1s
+      loops: 1
+    drop_target_complete_3_sound:
+      action: stop
+      fade_out: 0.5s
+      
+  lwr_red_dropbank_shot_timeout:
+    drop_target_timer_sound:
+      action: stop
+      
+############# Upper left dropbank ##########  
+  timer_tmr_reset_drop_bank_blue_upr_started:
+    drop_target_timer_sound:
+      action: play
+      fade_in: 1s
+      loops: 1
+  drop_target_bank_left_bank_upr_down:
+    drop_target_timer_sound:
+      action: stop
+      #fade_out: 1s      
+    drop_target_complete_3_sound:
+      action: play
+      #fade_out: 1s
+      loops: 1
+      
+  drop_target_bank_left_bank_upr_up:
+    drop_target_timer_sound:
+      action: stop
+      #fade_out: 1s
+      loops: 1
+    drop_target_complete_3_sound:
+      action: stop
+      fade_out: 0.5s
+      
+  upr_blu_dropbank_shot_timeout:
+    drop_target_timer_sound:
+      action: stop
+      
+############# Upper right dropbank ##########  
+  timer_tmr_reset_drop_bank_red_upr_started:
+    drop_target_timer_sound:
+      action: play
+      fade_in: 1s
+      loops: 1
+  drop_target_bank_right_bank_upr_down:
+    drop_target_timer_sound:
+      action: stop
+      #fade_out: 1s      
+    drop_target_complete_3_sound:
+      action: play
+      #fade_out: 1s
+      loops: 1
+      
+  drop_target_bank_right_bank_upr_up:
+    drop_target_timer_sound:
+      action: stop
+      #fade_out: 1s
+      loops: 1
+    drop_target_complete_3_sound:
+      action: stop
+      fade_out: 0.5s
+      
+  upr_red_dropbank_shot_timeout:
+    drop_target_timer_sound:
+      action: stop
+      
+      
+      
+      
+  ball_ended:
+    drop_target_timer_sound:
+      action: stop
+      #fade_out: 1s
+      
+  #############  dropbank_bottom mode sounds - END ###############
+  
+  
+extra_balls:
+  extra_ball_eb:
+    award_events: extra_ball_award_achieved
+    max_per_game: 2
+    
+multiballs:
+  mb_upper_lock:
+    ball_count: 3
+    ball_count_type: total
+    shoot_again: 5s
+    enable_events: mb_multiball_complete, timer_mb_multiball_show_timer_complete
+    start_events: multiball_release_ready #timer_mb_start_escape_timer_complete  # maybe a voice show stops first?
+    stop_events: timer_mb_multiball_show_timer_complete
+    #reset_events: timer_mb_multiball_show_timer_complete
+    ball_locks: bd_top_kickout
+  
+timers:
+  timer_down_ball_save:
+    start_value: 2
+    end_value: 0
+    direction: down
+    tick_interval: 1s
+    start_running: no
+    control_events:
+        - event: ball_save_shoot_again_saving_ball
+          action: start
+        - event: timer_timer_down_ball_save_complete
+          action: reset
+  timer_down_rematch:
+    start_value: 3
+    end_value: 0
+    direction: down
+    tick_interval: 1s
+    start_running: no
+    control_events:
+        - event: ball_starting{is_extra_ball}
+          action: start
+        - event: timer_timer_down_rematch_complete
+          action: reset
+  
+  
+  
+slide_player:
+
+  mode_base_started:   #{current_player.ball==1}:
+    widgets:
+    - type: text
+      text: (score)
+      number_grouping: true
+      min_digits: 2
+      font_size: 140
+      z: 2
+        
+#slides:
+#  slide_1:
+#  - type: text
+#    text: (player1|score)
+#    number_grouping: true
+#    min_digits: 2
+#    y: middle+2
+#    #persist_slide: yes
+#    font_size: 140
+ #   z: 10
+ 
+variable_player:
+ 
+  mode_base_started:
+    dp_music_value:
+      int: 0
+      action: set
+ 
+  player_score{value>=300000}:
+    dp_music_value:
+      int: 1
+      action: set
+      
+  DP_1_voice_ended:
+    dp_music_value:
+      int: 0
+      action: set
+      
+      

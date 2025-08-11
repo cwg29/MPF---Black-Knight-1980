@@ -1,0 +1,10 @@
+#show_version=5
+##! show: flash_blue_light_show
+
+#Step 1
+- duration: 1
+  lights:
+    (led): blue-f500ms
+- duration: 1
+  lights:
+    (led): off-f500ms

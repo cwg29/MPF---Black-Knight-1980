@@ -1,0 +1,7 @@
+#show_version=5
+##! show: red_light_show
+
+#Step 1
+- duration: 1
+  lights:
+    (led): red-f500ms

@@ -1,0 +1,49 @@
+#show_version=5
+##! show: attract_display_loop
+##! mode: attract
+#BLACK KNIGHT
+
+
+    
+- duration: 4s    
+  slides:
+    ball_end_slide:  
+      widgets:
+      - type: video
+        video: ball_end_video
+        height: 720
+        width: 1280
+        z: 5
+        expire: 5s
+      transition:
+        type: fade
+        duration: 1s        
+
+
+#- duration: 15s
+#  slides:
+#    mermaid_slide:
+#      widgets:
+#      - type: video
+#        video: attract_loop_video
+#        height: 720
+#        width: 1280
+#      #widgets:
+#      #- type: text
+#      #  text: ARZACH!
+#      #  color: red
+#      #  font_size: 120
+#      #  z: 10
+#       # y: 40
+#      #  anchor_y: bottom
+#      transition:
+#        type: fade
+#        duration: 2s
+#        #direction: left
+#      #auto_play: yes
+#      #control_events:
+#        #- event: mode_attract_started
+#          #action: play
+
+
+

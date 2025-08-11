@@ -1,0 +1,28 @@
+#show_version=5
+##! show: flash_orange_light_show
+
+#Step 1
+- duration: 1
+  lights:
+    (led): orange-f250ms
+- duration: 1
+  lights:
+    (led): off-f250ms
+- duration: 1
+  lights:
+    (led): orange-f250ms
+- duration: 1
+  lights:
+    (led): off-f250ms
+- duration: 1
+  lights:
+    (led): orange-f250ms
+- duration: 1
+  lights:
+    (led): off-f250ms
+- duration: 1
+  lights:
+    (led): orange-f250ms
+- duration: 1
+  lights:
+    (led): off-f250ms

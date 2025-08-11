@@ -1,0 +1,334 @@
+#config_version=5
+##! mode: awards
+# in modes/awards
+
+mode:
+  start_events: start_mode_awards
+  stop_events: stop_mode_awards
+  priority: 175
+
+
+# Extra Ball Achievement    
+
+
+achievements:
+
+### Top Drop Banks ################################################################
+
+  top_left_eb_lvl_1:
+    show_tokens:
+      led: led_lf_upr_blue_arrow_1
+    #show_when_selected: flash_blue_light_show
+    show_when_completed: blue_light_show
+    events_when_started: top_left_eb_lvl_l_started
+    start_events: initialize_extra_ball
+    enable_events: initialize_extra_ball, reset_extra_ball
+    complete_events: top_left_eb_lvl_1_complete
+    reset_events: reset_top_left_eb_lvl_1
+    events_when_completed: top_left_eb_lvl_1_achieved
+  top_left_eb_lvl_2:
+    show_tokens:
+      led: led_lf_upr_blue_arrow_2
+    #show_when_selected: flash_blue_light_show
+    show_when_completed: blue_light_show
+    events_when_started: top_left_eb_lvl_2_started
+    start_events: 
+      - top_left_eb_lvl_1_achieved
+      - ball_starting{current_player.top_left_eb_lvl_value==1}
+    enable_events: initialize_extra_ball, reset_extra_ball
+    complete_events: top_left_eb_lvl_2_complete
+    reset_events: reset_top_left_eb_lvl_2
+    events_when_completed: top_left_eb_lvl_2_achieved
+  top_left_eb_lvl_3:
+    show_tokens:
+      led: led_lf_upr_blue_arrow_3
+    #show_when_selected: flash_blue_light_show
+    show_when_completed: blue_light_show
+    events_when_started: top_left_eb_lvl_3_started
+    start_events:
+      - top_left_eb_lvl_2_achieved
+      - ball_starting{current_player.top_left_eb_lvl_value==2}
+    enable_events: initialize_extra_ball, reset_extra_ball
+    complete_events: upr_blu_left_extra_ball_enable
+    reset_events: reset_top_left_eb_lvl_3
+    events_when_completed: top_left_eb_lvl_3_achieved
+    
+  top_right_eb_lvl_1:
+    show_tokens:
+      led: led_rt_upr_red_arrow_1
+    #show_when_selected: flash_red_light_show
+    show_when_completed: red_light_show
+    events_when_started: top_right_eb_lvl_l_started
+    start_events: initialize_extra_ball
+    enable_events: initialize_extra_ball, reset_extra_ball
+    complete_events: top_right_eb_lvl_1_complete
+    reset_events: reset_top_right_eb_lvl_1
+    events_when_completed: top_right_eb_lvl_1_achieved
+  top_right_eb_lvl_2:
+    show_tokens:
+      led: led_rt_upr_red_arrow_2
+    #show_when_selected: flash_red_light_show
+    show_when_completed: red_light_show
+    events_when_started: top_right_eb_lvl_2_started
+    start_events: 
+      - top_right_eb_lvl_1_achieved
+      - ball_starting{current_player.top_right_eb_lvl_value==1}
+    enable_events: initialize_extra_ball, reset_extra_ball
+    complete_events: top_right_eb_lvl_2_complete
+    reset_events: reset_top_right_eb_lvl_2
+    events_when_completed: top_right_eb_lvl_2_achieved
+  top_right_eb_lvl_3:
+    show_tokens:
+      led: led_rt_upr_red_arrow_3
+    #show_when_selected: flash_red_light_show
+    show_when_completed: red_light_show
+    events_when_started: top_right_eb_lvl_3_started
+    start_events:
+      - top_right_eb_lvl_2_achieved
+      - ball_starting{current_player.top_right_eb_lvl_value==2}
+    enable_events: initialize_extra_ball, reset_extra_ball
+    complete_events: upr_red_right_extra_ball_enable
+    reset_events: reset_top_right_eb_lvl_3
+    events_when_completed: top_right_eb_lvl_3_achieved
+    
+### Lower Drop Banks ################################################################
+
+  lwr_left_eb_lvl_1:
+    show_tokens:
+      led: led_lf_lwr_blue_arrow_1
+    #show_when_selected: flash_blue_light_show
+    show_when_completed: blue_light_show
+    events_when_started: lwr_left_eb_lvl_l_started
+    start_events: initialize_extra_ball
+    enable_events: initialize_extra_ball, reset_extra_ball
+    complete_events: lwr_left_eb_lvl_1_complete
+    reset_events: reset_lwr_left_eb_lvl_1
+    events_when_completed: lwr_left_eb_lvl_1_achieved
+  lwr_left_eb_lvl_2:
+    show_tokens:
+      led: led_lf_lwr_blue_arrow_2
+    #show_when_selected: flash_blue_light_show
+    show_when_completed: blue_light_show
+    events_when_started: lwr_left_eb_lvl_2_started
+    start_events: 
+      - lwr_left_eb_lvl_1_achieved
+      - ball_starting{current_player.lwr_left_eb_lvl_value==1}
+    enable_events: initialize_extra_ball, reset_extra_ball
+    complete_events: lwr_left_eb_lvl_2_complete
+    reset_events: reset_lwr_left_eb_lvl_2
+    events_when_completed: lwr_left_eb_lvl_2_achieved
+  lwr_left_eb_lvl_3:
+    show_tokens:
+      led: led_lf_lwr_blue_arrow_3
+    #show_when_selected: flash_blue_light_show
+    show_when_completed: blue_light_show
+    events_when_started: lwr_left_eb_lvl_3_started
+    start_events:
+      - lwr_left_eb_lvl_2_achieved
+      - ball_starting{current_player.lwr_left_eb_lvl_value==2}
+    enable_events: initialize_extra_ball, reset_extra_ball
+    complete_events: lwr_blu_left_extra_ball_enable
+    reset_events: reset_lwr_left_eb_lvl_3
+    events_when_completed: lwr_left_eb_lvl_3_achieved
+    
+  lwr_right_eb_lvl_1:
+    show_tokens:
+      led: led_rt_lwr_red_arrow_1
+    #show_when_selected: flash_red_light_show
+    show_when_completed: red_light_show
+    events_when_started: lwr_right_eb_lvl_l_started
+    start_events: initialize_extra_ball
+    enable_events: initialize_extra_ball, reset_extra_ball
+    complete_events: lwr_right_eb_lvl_1_complete
+    reset_events: reset_lwr_right_eb_lvl_1
+    events_when_completed: lwr_right_eb_lvl_1_achieved
+  lwr_right_eb_lvl_2:
+    show_tokens:
+      led: led_rt_lwr_red_arrow_2
+    #show_when_selected: flash_red_light_show
+    show_when_completed: red_light_show
+    events_when_started: lwr_right_eb_lvl_2_started
+    start_events: 
+      - lwr_right_eb_lvl_1_achieved
+      - ball_starting{current_player.lwr_right_eb_lvl_value==1}
+    enable_events: initialize_extra_ball, reset_extra_ball
+    complete_events: lwr_right_eb_lvl_2_complete
+    reset_events: reset_lwr_right_eb_lvl_2
+    events_when_completed: lwr_right_eb_lvl_2_achieved
+  lwr_right_eb_lvl_3:
+    show_tokens:
+      led: led_rt_lwr_red_arrow_3
+    #show_when_selected: flash_red_light_show
+    show_when_completed: red_light_show
+    events_when_started: lwr_right_eb_lvl_3_started
+    start_events:
+      - lwr_right_eb_lvl_2_achieved
+      - ball_starting{current_player.lwr_right_eb_lvl_value==2}
+    enable_events: initialize_extra_ball, reset_extra_ball
+    complete_events: lwr_red_right_extra_ball_enable
+    reset_events: reset_lwr_right_eb_lvl_3
+    events_when_completed: lwr_right_eb_lvl_3_achieved
+
+
+    
+achievement_groups:
+
+### Top Drop Banks ######################################################
+  
+  top_left_eb_awards:
+    achievements:
+      - top_left_eb_lvl_1
+      - top_left_eb_lvl_2
+      - top_left_eb_lvl_3
+      
+    #show_tokens:
+    #  led: extra_ball_lane
+    auto_select: false
+    events_when_all_completed: top_left_eb_awards_done
+    enable_while_no_achievement_started: true #In our case, we do not want to automatically enable the achievement group when no achievement is started, because the rules for Addams Family say that the player has to shoot the center ramp or right inlane to light the chair (which is enabling this achievement group).
+    #show_when_enabled: flash_green_light_show
+    disable_while_achievement_started: false
+    #start_selected_events: left_saucer
+    enable_events: base
+    disable_events: unlight_extra_ball
+    
+  top_right_eb_awards:
+    achievements:
+      - top_right_eb_lvl_1
+      - top_right_eb_lvl_2
+      - top_right_eb_lvl_3
+      
+    #show_tokens:
+    #  led: extra_ball_lane
+    auto_select: false
+    events_when_all_completed: top_right_eb_awards_done
+    enable_while_no_achievement_started: true #In our case, we do not want to automatically enable the achievement group when no achievement is started, because the rules for Addams Family say that the player has to shoot the center ramp or right inlane to light the chair (which is enabling this achievement group).
+    #show_when_enabled: flash_green_light_show
+    disable_while_achievement_started: false
+    #start_selected_events: left_saucer
+    enable_events: base
+    disable_events: unlight_extra_ball
+    
+     
+### Lower Drop Banks ######################################################
+  
+  lwr_left_eb_awards:
+    achievements:
+      - lwr_left_eb_lvl_1
+      - lwr_left_eb_lvl_2
+      - lwr_left_eb_lvl_3
+      
+    #show_tokens:
+    #  led: extra_ball_lane
+    auto_select: false
+    events_when_all_completed: lwr_left_eb_awards_done
+    enable_while_no_achievement_started: true #In our case, we do not want to automatically enable the achievement group when no achievement is started, because the rules for Addams Family say that the player has to shoot the center ramp or right inlane to light the chair (which is enabling this achievement group).
+    #show_when_enabled: flash_green_light_show
+    disable_while_achievement_started: false
+    #start_selected_events: left_saucer
+    enable_events: base
+    disable_events: unlight_extra_ball
+    
+  lwr_right_eb_awards:
+    achievements:
+      - lwr_right_eb_lvl_1
+      - lwr_right_eb_lvl_2
+      - lwr_right_eb_lvl_3
+      
+    #show_tokens:
+    #  led: extra_ball_lane
+    auto_select: false
+    events_when_all_completed: lwr_right_eb_awards_done
+    enable_while_no_achievement_started: true #In our case, we do not want to automatically enable the achievement group when no achievement is started, because the rules for Addams Family say that the player has to shoot the center ramp or right inlane to light the chair (which is enabling this achievement group).
+    #show_when_enabled: flash_green_light_show
+    disable_while_achievement_started: false
+    #start_selected_events: left_saucer
+    enable_events: base
+    disable_events: unlight_extra_ball
+    
+    
+    
+variable_player:
+
+### Top Drop Banks ######################################################
+
+  ball_starting{current_player.ball==1}:
+    top_left_eb_lvl_value:
+      int: 0
+      action: set
+    top_right_eb_lvl_value:
+      int: 0
+      action: set
+    lwr_left_eb_lvl_value:
+      int: 0
+      action: set
+    lwr_right_eb_lvl_value:
+      int: 0
+      action: set
+    all_drops_eb_lvl_value:
+      int: 0
+      action: set
+      
+  top_left_eb_lvl_1_complete:
+    top_left_eb_lvl_value:
+      int: 1
+      action: set
+  top_left_eb_lvl_2_complete:
+    top_left_eb_lvl_value:
+      int: 2
+      action: set
+  upr_blu_left_extra_ball_enable:
+    top_left_eb_lvl_value:
+      int: 3
+      action: set
+      
+  top_right_eb_lvl_1_complete:
+    top_right_eb_lvl_value:
+      int: 1
+      action: set
+  top_right_eb_lvl_2_complete:
+    top_right_eb_lvl_value:
+      int: 2
+      action: set
+  upr_red_right_extra_ball_enable:
+    top_right_eb_lvl_value:
+      int: 3
+      action: set
+      
+### Lower Drop Banks ######################################################
+
+  lwr_left_eb_lvl_1_complete:
+    lwr_left_eb_lvl_value:
+      int: 1
+      action: set
+  lwr_left_eb_lvl_2_complete:
+    lwr_left_eb_lvl_value:
+      int: 2
+      action: set
+  lwr_blu_left_extra_ball_enable:
+    lwr_left_eb_lvl_value:
+      int: 3
+      action: set
+      
+  lwr_right_eb_lvl_1_complete:
+    lwr_right_eb_lvl_value:
+      int: 1
+      action: set
+  lwr_right_eb_lvl_2_complete:
+    lwr_right_eb_lvl_value:
+      int: 2
+      action: set
+  lwr_red_right_extra_ball_enable:
+    lwr_right_eb_lvl_value:
+      int: 3
+      action: set
+      
+### All Drop Banks ######################################################
+    
+  all_drops_eb_complete:
+    all_drops_eb_lvl_value:
+      int: 1
+      action: set
+    
+
+        

@@ -1,0 +1,96 @@
+#show_version=5
+- duration: 4s
+  segment_displays:
+    neoSegP1:
+      text: "BLACK  "
+      transition:
+        type: split
+        mode: wipe
+        direction: out
+        # text: "***"
+
+#  lights:
+#    bb_high_score: off
+
+- duration: 4s
+  segment_displays:
+    neoSegP2:
+      text: "  KNIGHT "
+      transition:
+        type: split
+        mode: wipe
+        direction: out
+    neoSegP3:
+      text: "  1980  "
+      transition:
+        type: split
+        mode: wipe
+        direction: out
+
+- duration: 4s
+  segment_displays:
+    neoSegP3:
+      text: "  BY  "
+      transition:
+        type: split
+        mode: wipe
+        direction: out
+    neoSegP4:
+      text: " CW-NUC "
+      transition:
+        type: split
+        mode: wipe
+        direction: out
+
+#- duration: 4s
+#  segment_displays:
+#    neoSegTop:
+#      text: "  AHH     YES   "
+#      transition:
+#        type: split
+#        mode: wipe
+#        direction: out
+#    neoSegBot:
+#      text: "  DIVE   AGAIN  "
+#      transition:
+#        type: split
+#        mode: wipe
+#        direction: out
+
+#- duration: 4s
+#  segment_displays:
+#    neoSegTop:
+#      text: "{(machine.score1_value)}     {(machine.score1_name)}"
+ #     transition:
+#        type: split
+#        mode: wipe
+#        direction: out
+    
+ #   neoSegBot:
+ #     text: " DIVER  CAPTAIN "
+ #     transition:
+ #       type: split
+ #       mode: wipe
+ #       direction: out
+ # lights:
+#    bb_high_score: white-f1000ms
+
+##- duration: 4s
+##  segment_displays:
+##    neoSegTop:
+ ##     text: "LAST    GAME "
+# #     transition:
+##        type: push
+##        direction: left
+##        text: " <<< "
+# #   neoSegBot:    
+##      text: "{(machine|high_score):>8,d}"
+##      transition:
+##        type: push
+##        direction: right
+##        text: " >>> "
+
+
+
+
+
